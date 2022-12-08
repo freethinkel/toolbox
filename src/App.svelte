@@ -5,7 +5,7 @@
 
 	onMount(() => {
 		emit('init_process');
-		listen('on_mouse_down', (payload) => {
+		listen('window_manager', (payload) => {
 			console.log(payload);
 		});
 	});

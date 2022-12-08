@@ -3,42 +3,28 @@
     windows_subsystem = "windows"
 )]
 
+mod patch_window;
 mod window_manager;
 
-use active_win_pos_rs::get_active_window;
-use cocoa::{
-    appkit::{NSEventMask, NSEventType},
-    base::id,
-};
+use patch_window::PatchWindow;
 use tauri::Manager;
-use window_manager::event::{Event, EventMonitor};
+use window_manager::WindowManager;
 
 fn main() {
-    Event::global_monitor(
-        NSEventMask::NSLeftMouseDownMask
-            | NSEventMask::NSLeftMouseDraggedMask
-            | NSEventMask::NSLeftMouseUpMask,
-        |event| {
-            unsafe {
-                let loc = Event::location(event);
-                let eventType = Event::eventType(event);
-                println!("new event type - {:?} location - {:?}", eventType, loc);
-                let win = get_active_window();
-                println!("active_window {:?}", win);
-            }
+    let builder = tauri::Builder::default();
 
-            None
-        },
-    );
-
-    tauri::Builder::default()
+    builder
         .setup(|app| {
             let app = app.handle();
+            let main_window = app.get_window("main").unwrap();
 
-            app.windows().iter().for_each(|(_, window)| {
-                #[cfg(target_os = "macos")]
-                {}
-            });
+            let window_manager = WindowManager::new(app);
+            window_manager.start();
+
+            #[cfg(target_os = "macos")]
+            {
+                main_window.clear_decoration();
+            }
 
             Ok(())
         })
