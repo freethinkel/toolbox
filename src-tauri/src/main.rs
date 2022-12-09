@@ -3,23 +3,14 @@
     windows_subsystem = "windows"
 )]
 
+mod commands;
 mod patch_window;
 mod window_manager;
 
+use commands::{change_window_position, get_screens, set_current_window_position};
 use patch_window::PatchWindow;
-use tauri::{command, Manager};
+use tauri::Manager;
 use window_manager::WindowManager;
-
-#[command]
-async fn change_window_position(payload: String) {
-    let parsed = serde_json::from_str(payload.as_str());
-    match parsed {
-        Ok(data) => {
-            WindowManager::set_window_position(data);
-        }
-        Err(_) => {}
-    }
-}
 
 fn main() {
     let builder = tauri::Builder::default();
@@ -31,6 +22,7 @@ fn main() {
 
             let window_manager = WindowManager::new(app);
             window_manager.start();
+            main_window.open_devtools();
 
             #[cfg(target_os = "macos")]
             {
@@ -39,7 +31,11 @@ fn main() {
 
             Ok(())
         })
-        .invoke_handler(tauri::generate_handler![change_window_position])
+        .invoke_handler(tauri::generate_handler![
+            change_window_position,
+            set_current_window_position,
+            get_screens
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

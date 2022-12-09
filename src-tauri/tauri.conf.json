@@ -67,7 +67,7 @@
 				"x": 0,
 				"y": 0,
 				"height": 600,
-				"resizable": true,
+				"resizable": false,
 				"title": "toolbox",
 				"width": 800
 			}

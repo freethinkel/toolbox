@@ -1,13 +1,13 @@
 use cocoa::{
     appkit::{
-        NSColor, NSMainMenuWindowLevel, NSWindow, NSWindowCollectionBehavior, NSWindowStyleMask,
-        NSWindowTitleVisibility,
+        NSApp, NSApplication, NSColor, NSImage, NSMainMenuWindowLevel, NSWindow,
+        NSWindowCollectionBehavior, NSWindowStyleMask, NSWindowTitleVisibility,
     },
-    base::{id, YES},
+    base::{id, nil, YES},
 };
-use objc::{msg_send, sel, sel_impl};
+use objc::{class, msg_send, sel, sel_impl};
 use raw_window_handle::{HasRawWindowHandle, RawWindowHandle};
-use tauri::Window as TauriWindow;
+use tauri::{utils::config::BundleConfig, Window as TauriWindow};
 
 pub trait PatchWindow {
     fn clear_decoration(&self);
@@ -26,6 +26,9 @@ impl PatchWindow for TauriWindow {
             ns_win.setCollectionBehavior_(
                 NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces,
             );
+
+            // let plist = BundleConfig::default();
+            // plist.ns_win.setAcceptsMouseMovedEvents_(false);
 
             ns_win.setHasShadow_(false);
 

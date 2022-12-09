@@ -4,16 +4,20 @@ mod window;
 
 use accessibility_sys::{AXError, AXUIElementRef};
 use active_win_pos_rs::{get_active_window, ActiveWindow};
-use cocoa::appkit::{CGPoint, NSEventMask, NSEventType};
+use cocoa::{
+    appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSView, NSWindow},
+    base::{id, nil},
+    foundation::{NSArray, NSPoint, NSRect, NSSize},
+};
 use core_graphics::geometry::{CGRect, CGSize};
 use data::{MouseEvent, Point, WindowInfo};
 use std::sync::Mutex;
 use tauri::{AppHandle, Manager};
 use window::WindowElement;
 
-use crate::window_manager::event::Event;
+use crate::window_manager::{data::Frame, event::Event};
 
-use self::data::SetWindowPosition;
+use self::data::{Screen, SetWindowPosition, Size};
 
 pub struct WindowManager {
     app: AppHandle,
@@ -22,6 +26,60 @@ pub struct WindowManager {
 impl WindowManager {
     pub(crate) fn new(app: AppHandle) -> Self {
         WindowManager { app: app }
+    }
+
+    pub fn set_current_window_position(window: id, rect: Frame) {
+        let size = NSSize {
+            width: rect.size.width,
+            height: rect.size.height,
+        };
+        let origin = NSPoint {
+            x: rect.position.x,
+            y: rect.position.y,
+        };
+        unsafe {
+            window.setFrame_display_(
+                NSRect {
+                    origin: origin,
+                    size: size,
+                },
+                true,
+            )
+        }
+    }
+
+    pub fn get_screens() -> Vec<Screen> {
+        unsafe {
+            let screens = NSScreen::screens(nil);
+            let mut frames: Vec<Screen> = vec![];
+            for i in 0..unsafe { screens.count() } {
+                let frame = NSScreen::frame(screens.objectAtIndex(i));
+                let visibleFrame = NSScreen::visibleFrame(screens.objectAtIndex(i));
+                frames.push(Screen {
+                    visibleFrame: Frame {
+                        size: Size {
+                            width: visibleFrame.size.width,
+                            height: visibleFrame.size.height,
+                        },
+                        position: Point {
+                            x: visibleFrame.origin.x,
+                            y: visibleFrame.origin.y,
+                        },
+                    },
+                    frame: Frame {
+                        size: Size {
+                            width: frame.size.width,
+                            height: frame.size.height,
+                        },
+                        position: Point {
+                            x: frame.origin.x,
+                            y: frame.origin.y,
+                        },
+                    },
+                });
+            }
+            frames
+        }
     }
 
     pub fn set_window_position(win_data: SetWindowPosition) {

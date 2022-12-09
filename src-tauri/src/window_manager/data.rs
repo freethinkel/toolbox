@@ -33,3 +33,15 @@ pub struct SetWindowPosition {
     pub size: Size,
     pub position: Point,
 }
+
+#[derive(Serialize, Deserialize)]
+pub struct Frame {
+    pub size: Size,
+    pub position: Point,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Screen {
+    pub visibleFrame: Frame,
+    pub frame: Frame,
+}
