@@ -1,4 +1,3 @@
-mod accessibility;
 pub mod data;
 pub mod event;
 mod window;
@@ -26,8 +25,6 @@ impl WindowManager {
     }
 
     pub fn set_window_position(win_data: SetWindowPosition) {
-        let id = "3063".to_string();
-        let pid = 566;
         let win = WindowElement::get_window_from_id(win_data.pid, win_data.id);
 
         WindowElement::set_frame(
@@ -116,37 +113,42 @@ impl WindowManager {
                         *inner = None;
                     }
                     NSEventType::NSLeftMouseDragged => {
-                        let current_win = get_active_window().unwrap();
-                        let mut last_win_box = last_win.lock().unwrap();
-                        let is_moving = !last_win_box.is_none()
-                            && last_win_box.as_mut().unwrap().position.height
-                                == current_win.position.height
-                            && last_win_box.as_mut().unwrap().position.width
-                                == current_win.position.width
-                            && (last_win_box.as_mut().unwrap().position.x
-                                != current_win.position.x
-                                || last_win_box.as_mut().unwrap().position.y
-                                    != current_win.position.y);
+                        let current_win = get_active_window();
+                        match current_win {
+                            Ok(current_win) => {
+                                let mut last_win_box = last_win.lock().unwrap();
+                                let is_moving = !last_win_box.is_none()
+                                    && last_win_box.as_mut().unwrap().position.height
+                                        == current_win.position.height
+                                    && last_win_box.as_mut().unwrap().position.width
+                                        == current_win.position.width
+                                    && (last_win_box.as_mut().unwrap().position.x
+                                        != current_win.position.x
+                                        || last_win_box.as_mut().unwrap().position.y
+                                            != current_win.position.y);
 
-                        if (is_moving) {
-                            let json = serde_json::to_string(&MouseEvent {
-                                event_type: "dragging".to_string(),
-                                point: location,
-                                window_info: Some(WindowInfo {
-                                    id: current_win.window_id,
-                                    pid: current_win.process_id,
-                                    point: {
-                                        Point {
-                                            x: current_win.position.x,
-                                            y: current_win.position.y,
-                                        }
-                                    },
-                                }),
-                            })
-                            .unwrap();
-                            app.lock()
-                                .unwrap()
-                                .emit_all("window_manager", format!("{}", json));
+                                if is_moving {
+                                    let json = serde_json::to_string(&MouseEvent {
+                                        event_type: "dragging".to_string(),
+                                        point: location,
+                                        window_info: Some(WindowInfo {
+                                            id: current_win.window_id,
+                                            pid: current_win.process_id,
+                                            point: {
+                                                Point {
+                                                    x: current_win.position.x,
+                                                    y: current_win.position.y,
+                                                }
+                                            },
+                                        }),
+                                    })
+                                    .unwrap();
+                                    app.lock()
+                                        .unwrap()
+                                        .emit_all("window_manager", format!("{}", json));
+                                }
+                            }
+                            Err(_) => {}
                         }
                     }
                     _ => {}

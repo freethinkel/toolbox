@@ -2378,45 +2378,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rust-macios"
-version = "0.4.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "82d9d44e57990696e97e75d0b4b46bcb8c6a48cfebddcbb965065a35d2821a1f"
-dependencies = [
- "bitflags",
- "block",
- "lazy_static",
- "libc",
- "objc",
- "objc_id",
- "rust-macios-app-kit-proc-macros",
- "rust-macios-objective-c-runtime-proc-macros",
- "va_list",
-]
-
-[[package]]
-name = "rust-macios-app-kit-proc-macros"
-version = "0.2.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "77b11757ec3ab6605d19ff914c9ddad027c5c82e5ee3a5cc856ec3860235537a"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
-name = "rust-macios-objective-c-runtime-proc-macros"
-version = "0.2.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "066f9695c697a680355a24bde91f7761833692e531f474fb105625f6fb99aaf9"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
-
-[[package]]
 name = "rustc-hash"
 version = "1.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3264,7 +3225,7 @@ dependencies = [
  "core-foundation",
  "core-graphics",
  "objc",
- "rust-macios",
+ "raw-window-handle",
  "serde",
  "serde_json",
  "tauri",
@@ -3419,12 +3380,6 @@ checksum = "422ee0de9031b5b948b97a8fc04e3aa35230001a722ddd27943e0be31564ce4c"
 dependencies = [
  "getrandom 0.2.8",
 ]
-
-[[package]]
-name = "va_list"
-version = "0.1.4"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "350bd5ef744f978a387cd08ce514be4e3766746496f355d59d68af36f52d36da"
 
 [[package]]
 name = "valuable"

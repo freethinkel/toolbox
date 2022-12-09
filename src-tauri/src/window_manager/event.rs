@@ -1,7 +1,9 @@
 use block::ConcreteBlock;
-use cocoa::appkit::{CGPoint, NSEvent, NSEventMask, NSEventType};
-use objc::{class, msg_send, runtime::Object, sel, sel_impl};
-use rust_macios::objective_c_runtime::{id, Id};
+use cocoa::{
+    appkit::{CGPoint, NSEvent, NSEventMask, NSEventType},
+    base::id,
+};
+use objc::{class, msg_send, sel, sel_impl};
 
 #[repr(C)]
 pub struct __CGEvent;
@@ -9,7 +11,7 @@ pub struct __CGEvent;
 pub type CGEventRef = *const __CGEvent;
 
 #[derive(Debug)]
-pub struct EventMonitor(pub Id<Object>);
+pub struct EventMonitor(pub id);
 
 /// A wrapper over an `NSEvent`.
 #[derive(Debug)]
