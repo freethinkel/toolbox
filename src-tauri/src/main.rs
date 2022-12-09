@@ -7,8 +7,19 @@ mod patch_window;
 mod window_manager;
 
 use patch_window::PatchWindow;
-use tauri::Manager;
+use tauri::{command, Manager};
 use window_manager::WindowManager;
+
+#[command]
+async fn change_window_position(payload: String) {
+    let parsed = serde_json::from_str(payload.as_str());
+    match parsed {
+        Ok(data) => {
+            WindowManager::set_window_position(data);
+        }
+        Err(_) => {}
+    }
+}
 
 fn main() {
     let builder = tauri::Builder::default();
@@ -28,6 +39,7 @@ fn main() {
 
             Ok(())
         })
+        .invoke_handler(tauri::generate_handler![change_window_position])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

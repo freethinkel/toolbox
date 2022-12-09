@@ -11,6 +11,7 @@
 		"version": "0.0.0"
 	},
 	"tauri": {
+		"macOSPrivateApi": true,
 		"systemTray": {
 			"iconPath": "icons/icon.png",
 			"iconAsTemplate": true
@@ -33,7 +34,7 @@
 				"icons/icon.icns",
 				"icons/icon.ico"
 			],
-			"identifier": "com.tauri.dev",
+			"identifier": "ru.freethinkel.toolbox",
 			"longDescription": "",
 			"macOS": {
 				"entitlements": null,
@@ -61,7 +62,6 @@
 			{
 				"fullscreen": false,
 				"decorations": false,
-				"alwaysOnTop": true,
 				"titleBarStyle": "Transparent",
 				"transparent": true,
 				"x": 0,
