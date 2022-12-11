@@ -1,19 +1,25 @@
 import { invoke } from '@tauri-apps/api';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import type { ChannelMouseEvent } from '../models/channel';
-import type { Frame, Screen } from '../models/window';
+import type { Frame, Position, Screen, WindowInfo } from '../models/window';
 
 type ListenCallback = (event: ChannelMouseEvent) => void;
 
 export class Channel {
-	private _listeners: ListenCallback[] = [];
-	private _unlisten?: UnlistenFn;
+	private _windowManagerListeners: ListenCallback[] = [];
+	private _unlistenWindowManager?: UnlistenFn;
 	static instance: Channel = new Channel();
 
-	setWindowPosition() {}
+	setWindowPosition(frame: WindowInfo) {
+		invoke('change_window_position', { payload: JSON.stringify(frame) });
+	}
 
-	subscribe(cb: ListenCallback) {
-		this._listeners.push(cb);
+	subscribeWindowManager(cb: ListenCallback) {
+		this._windowManagerListeners.push(cb);
+	}
+
+	onStatusbarClick(cb: (point: Position) => void) {
+		listen('on_statusbar_click', (event) => cb(event.payload as Position));
 	}
 
 	async setCurrentWindowFrame(frame: Frame) {
@@ -24,18 +30,18 @@ export class Channel {
 		return invoke('get_screens');
 	}
 
-	async start() {
-		this._unlisten = await listen('window_manager', (event) => {
+	async startWindowManager() {
+		this._unlistenWindowManager = await listen('window_manager', (event) => {
 			const payload = JSON.parse(event.payload as string);
-			for (let cb of this._listeners) {
+			for (let cb of this._windowManagerListeners) {
 				cb(payload);
 			}
 		});
 	}
 
-	stop() {
-		if (this._unlisten) {
-			this._unlisten();
+	stopWindowManager() {
+		if (this._unlistenWindowManager) {
+			this._unlistenWindowManager();
 		}
 	}
 }

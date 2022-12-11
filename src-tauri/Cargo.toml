@@ -17,6 +17,7 @@ tauri = {version = "1.2", features = ["api-all", "macos-private-api", "system-tr
 serde_json = "1.0"
 active-win-pos-rs = "0.7.1"
 raw-window-handle = "0.5.0"
+window-vibrancy = "0.3.2"
 
 [target."cfg(target_os = \"macos\")".dependencies]
 cocoa = "0.24.1"
@@ -26,6 +27,7 @@ core-foundation = "0.9.3"
 core-graphics = "0.22.3"
 accessibility = "0.1.6"
 accessibility-sys = "0.1.3"
+objc_id = "0.1.1"
 
 [features]
 default = [ "custom-protocol" ]

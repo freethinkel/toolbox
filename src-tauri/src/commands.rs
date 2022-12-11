@@ -1,6 +1,6 @@
 use crate::window_manager::{data::Screen, WindowManager};
 use cocoa::base::id;
-use tauri::{command, AppHandle, Manager};
+use tauri::{command, Window};
 
 #[command]
 pub async fn change_window_position(payload: String) {
@@ -13,8 +13,7 @@ pub async fn change_window_position(payload: String) {
     }
 }
 #[command]
-pub fn set_current_window_position(app: AppHandle, payload: String) {
-    let window = app.get_window("main").unwrap();
+pub fn set_current_window_position(window: Window, payload: String) {
     let ns_window = window.ns_window();
     let rect = serde_json::from_str(payload.as_str());
     match rect {

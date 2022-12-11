@@ -2,11 +2,23 @@
 	import Rect from './Rect.svelte';
 	import { windowManager } from '../store/window-manager';
 
-	$: point = $windowManager.lastPosition?.point;
+	$: calc = $windowManager.areaCalculator;
+
+	$: area = calc.fromMouseEvent($windowManager.lastPosition);
+	$: rect = calc.rectFromSnapArea(area);
 </script>
 
+<span>{area || 'NO'}</span>
+
 <div class="canvas">
-	<Rect x={point?.x} y={point?.y - 200} />
+	{#if rect}
+		<Rect
+			height={rect.size.height}
+			width={rect.size.width}
+			x={rect.position.x}
+			y={rect.position.y}
+		/>
+	{/if}
 </div>
 
 <style>
@@ -16,5 +28,9 @@
 		right: 0;
 		top: 0;
 		bottom: 0;
+	}
+	span {
+		color: white;
+		font-size: 5rem;
 	}
 </style>

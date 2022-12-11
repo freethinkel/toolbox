@@ -1,9 +1,9 @@
 <script lang="ts">
 	import { invoke, window } from '@tauri-apps/api';
 	import { onMount } from 'svelte';
-	import Canvas from './lib/components/Canvas.svelte';
-	import { Channel } from './lib/service/channel';
-	import { windowManager } from './lib/store/window-manager';
+	import Canvas from '../lib/components/Canvas.svelte';
+	import { Channel } from '../lib/service/channel';
+	import { windowManager } from '../lib/store/window-manager';
 
 	windowManager.start();
 
@@ -13,10 +13,10 @@
 				console.log(data);
 			});
 		}, 1000);
-		Channel.instance.setCurrentWindowFrame({
-			size: { height: 600, width: 600 },
-			position: { x: 0, y: 0 },
-		});
+		// Channel.instance.setCurrentWindowFrame({
+		// 	size: { height: 600, width: 600 },
+		// 	position: { x: 0, y: 0 },
+		// });
 		// window.availableMonitors().then(console.log);
 		// window
 		// 	.primaryMonitor()

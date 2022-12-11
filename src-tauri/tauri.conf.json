@@ -60,6 +60,18 @@
 		},
 		"windows": [
 			{
+				"label": "statusbar",
+				"title": "statusbar",
+				"x": 0,
+				"y": 0,
+				"height": 200,
+				"width": 200,
+				"resizable": false,
+				"transparent": true,
+				"hiddenTitle": true,
+				"visible": false
+			},
+			{
 				"fullscreen": false,
 				"decorations": false,
 				"titleBarStyle": "Transparent",
@@ -68,6 +80,7 @@
 				"y": 0,
 				"height": 600,
 				"resizable": false,
+				"label": "main",
 				"title": "toolbox",
 				"width": 800
 			}
