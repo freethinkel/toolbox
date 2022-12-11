@@ -2,10 +2,9 @@ pub mod data;
 pub mod event;
 mod window;
 
-use accessibility_sys::{AXError, AXUIElementRef};
 use active_win_pos_rs::{get_active_window, ActiveWindow};
 use cocoa::{
-    appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSView, NSWindow},
+    appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSWindow},
     base::{id, nil},
     foundation::{NSArray, NSPoint, NSRect, NSSize},
 };
@@ -101,8 +100,8 @@ impl WindowManager {
     }
 
     pub fn start(&self) {
-        let mut last_win: Mutex<Option<ActiveWindow>> = Mutex::new(None.into());
-        let mut app = Mutex::new(self.app.clone());
+        let last_win: Mutex<Option<ActiveWindow>> = Mutex::new(None.into());
+        let app = Mutex::new(self.app.clone());
 
         Event::global_monitor(
             NSEventMask::NSLeftMouseDownMask
@@ -114,7 +113,7 @@ impl WindowManager {
                     x: location.x,
                     y: location.y,
                 };
-                let event_type = Event::eventType(event);
+                let event_type = Event::event_type(event);
 
                 match event_type {
                     NSEventType::NSLeftMouseDown => {
@@ -123,7 +122,7 @@ impl WindowManager {
                         match active_window {
                             Ok(active_window) => {
                                 *inner = Some(get_active_window().unwrap());
-                                let json = serde_json::to_string(&MouseEvent {
+                                let payload = &MouseEvent {
                                     point: location,
                                     event_type: "mouse_down".to_string(),
                                     window_info: Some(WindowInfo {
@@ -136,11 +135,13 @@ impl WindowManager {
                                             }
                                         },
                                     }),
-                                })
-                                .unwrap();
-                                app.lock()
-                                    .unwrap()
-                                    .emit_all("window_manager", format!("{}", json));
+                                };
+                                match app.lock() {
+                                    Ok(app) => {
+                                        app.emit_all("window_manager", payload);
+                                    }
+                                    Err(_) => {}
+                                }
                             }
                             Err(_) => {}
                         }
@@ -149,7 +150,7 @@ impl WindowManager {
                         let mut inner = last_win.lock().unwrap();
                         if (!inner.is_none()) {
                             let active_window = inner.as_mut().unwrap();
-                            let json = serde_json::to_string(&MouseEvent {
+                            let payload = &MouseEvent {
                                 event_type: "mouse_up".to_string(),
                                 point: location,
                                 window_info: Some(WindowInfo {
@@ -162,50 +163,56 @@ impl WindowManager {
                                         }
                                     },
                                 }),
-                            })
-                            .unwrap();
-                            app.lock()
-                                .unwrap()
-                                .emit_all("window_manager", format!("{}", json));
+                            };
+                            match app.lock() {
+                                Ok(app) => {
+                                    app.emit_all("window_manager", payload);
+                                }
+                                Err(_) => {}
+                            }
                         }
                         *inner = None;
                     }
                     NSEventType::NSLeftMouseDragged => {
                         let current_win = get_active_window();
                         match current_win {
-                            Ok(current_win) => {
-                                let mut last_win_box = last_win.lock().unwrap();
-                                let is_moving = !last_win_box.is_none()
-                                    && last_win_box.as_mut().unwrap().position.height
-                                        == current_win.position.height
-                                    && last_win_box.as_mut().unwrap().position.width
-                                        == current_win.position.width
-                                    && (last_win_box.as_mut().unwrap().position.x
-                                        != current_win.position.x
-                                        || last_win_box.as_mut().unwrap().position.y
-                                            != current_win.position.y);
+                            Ok(current_win) => match last_win.lock() {
+                                Ok(last_win) => match last_win.as_ref() {
+                                    Some(last_win) => {
+                                        let is_moving = last_win.position.height
+                                            == current_win.position.height
+                                            && last_win.position.width
+                                                == current_win.position.width
+                                            && (last_win.position.x != current_win.position.x
+                                                || last_win.position.y != current_win.position.y);
 
-                                if is_moving {
-                                    let json = serde_json::to_string(&MouseEvent {
-                                        event_type: "dragging".to_string(),
-                                        point: location,
-                                        window_info: Some(WindowInfo {
-                                            id: current_win.window_id,
-                                            pid: current_win.process_id,
-                                            point: {
-                                                Point {
-                                                    x: current_win.position.x,
-                                                    y: current_win.position.y,
+                                        if is_moving {
+                                            let payload = &MouseEvent {
+                                                event_type: "dragging".to_string(),
+                                                point: location,
+                                                window_info: Some(WindowInfo {
+                                                    id: current_win.window_id,
+                                                    pid: current_win.process_id,
+                                                    point: {
+                                                        Point {
+                                                            x: current_win.position.x,
+                                                            y: current_win.position.y,
+                                                        }
+                                                    },
+                                                }),
+                                            };
+                                            match app.lock() {
+                                                Ok(app) => {
+                                                    app.emit_all("window_manager", payload);
                                                 }
-                                            },
-                                        }),
-                                    })
-                                    .unwrap();
-                                    app.lock()
-                                        .unwrap()
-                                        .emit_all("window_manager", format!("{}", json));
-                                }
-                            }
+                                                Err(_) => {}
+                                            }
+                                        }
+                                    }
+                                    None => {}
+                                },
+                                Err(_) => {}
+                            },
                             Err(_) => {}
                         }
                     }

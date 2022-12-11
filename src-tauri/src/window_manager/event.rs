@@ -26,7 +26,7 @@ impl Event {
         }
     }
 
-    pub fn eventType(event: id) -> NSEventType {
+    pub fn event_type(event: id) -> NSEventType {
         unsafe { event.eventType() }
     }
 

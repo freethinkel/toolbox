@@ -32,7 +32,7 @@ export class Channel {
 
 	async startWindowManager() {
 		this._unlistenWindowManager = await listen('window_manager', (event) => {
-			const payload = JSON.parse(event.payload as string);
+			const payload = event.payload as any;
 			for (let cb of this._windowManagerListeners) {
 				cb(payload);
 			}

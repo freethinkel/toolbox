@@ -1,19 +1,17 @@
 use std::{ffi::c_void, ptr};
 
-use accessibility::AXUIElement;
 use accessibility_sys::{
     kAXErrorSuccess, kAXPositionAttribute, kAXSizeAttribute, kAXValueTypeCGPoint,
     kAXValueTypeCGSize, kAXWindowsAttribute, AXError, AXUIElementCopyAttributeValue,
-    AXUIElementCreateApplication, AXUIElementPerformAction, AXUIElementRef,
-    AXUIElementSetAttributeValue, AXValueCreate,
+    AXUIElementCreateApplication, AXUIElementRef, AXUIElementSetAttributeValue, AXValueCreate,
 };
 use cocoa::{base::id, foundation::NSArray};
 use core_foundation::{
-    base::{CFTypeRef, FromVoid, TCFType},
-    string::{CFString, CFStringRef},
+    base::{CFTypeRef, TCFType},
+    string::CFString,
 };
 use core_graphics::{
-    display::{CGPoint, CGRect, CGRectNull, CGSize},
+    display::{CGPoint, CGRect, CGSize},
     window::CGWindowID,
 };
 
@@ -21,11 +19,8 @@ pub struct WindowElement {}
 
 impl WindowElement {
     pub fn set_frame(window: AXUIElementRef, rect: CGRect) {
-        let mut point = rect.origin;
-        let mut size = rect.size;
-
-        WindowElement::set_position(window, point);
-        WindowElement::set_size(window, size);
+        WindowElement::set_position(window, rect.origin);
+        WindowElement::set_size(window, rect.size);
     }
 
     pub fn set_position(window: AXUIElementRef, mut point: CGPoint) {
