@@ -1,6 +1,8 @@
-use crate::window_manager::{data::Screen, WindowManager};
+use crate::window_manager::{data::Screen, event::EventMonitor, WindowManager};
 use cocoa::base::id;
-use tauri::{command, Window};
+use tauri::{command, AppHandle, Window, Manager};
+
+pub static mut WINDOW_MANAGER_GLOBAL: Option<WindowManager> = None;
 
 #[command]
 pub async fn change_window_position(payload: String) {
@@ -28,7 +30,47 @@ pub fn set_current_window_position(window: Window, payload: String) {
 }
 
 #[command]
+pub fn start_window_manager(app: AppHandle) {
+    unsafe {
+        match WINDOW_MANAGER_GLOBAL.clone() {
+            Some(window_manager) => {
+                window_manager.stop();
+                WINDOW_MANAGER_GLOBAL = None;
+            },
+            None => {},
+        }
+    }
+    let window_manager = WindowManager::new(app);
+
+    window_manager.start();
+    unsafe {
+        WINDOW_MANAGER_GLOBAL = Some(window_manager);
+    }
+}
+
+#[command]
+pub fn stop_window_manager() {
+    unsafe {
+        let window_manager_cloned = WINDOW_MANAGER_GLOBAL.clone();
+
+        match window_manager_cloned {
+            Some(window_manager_cloned) => {
+                window_manager_cloned.stop();
+                WINDOW_MANAGER_GLOBAL = None;
+            }
+            None => {}
+        }
+    }
+}
+
+#[command]
 pub fn get_screens() -> Option<Vec<Screen>> {
     let screens = WindowManager::get_screens();
     Some(screens)
+}
+
+
+#[command]
+pub fn send_message(app: AppHandle, payload: String)  {
+    app.emit_all("broadcast", payload);
 }

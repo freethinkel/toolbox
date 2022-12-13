@@ -41,7 +41,14 @@ pub struct Frame {
 }
 
 #[derive(Serialize, Deserialize)]
-pub struct Screen {
-    pub visibleFrame: Frame,
+pub struct CocoaScreen {
+    pub visible_frame: Frame,
     pub frame: Frame,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct Screen {
+    pub visible_frame: Frame,
+    pub frame: Frame,
+    pub cocoa: CocoaScreen,
 }

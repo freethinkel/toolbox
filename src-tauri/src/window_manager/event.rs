@@ -1,4 +1,4 @@
-use block::ConcreteBlock;
+use block::{ConcreteBlock, RcBlock};
 use cocoa::{
     appkit::{CGPoint, NSEvent, NSEventMask, NSEventType},
     base::id,
@@ -10,14 +10,12 @@ pub struct __CGEvent;
 
 pub type CGEventRef = *const __CGEvent;
 
-#[derive(Debug)]
-pub struct EventMonitor(pub id);
+#[derive(Clone)]
+pub struct EventMonitor {
+    monitor_id: id,
+}
 
-/// A wrapper over an `NSEvent`.
-#[derive(Debug)]
-pub struct Event(pub id);
-
-impl Event {
+impl EventMonitor {
     pub fn location(event: id) -> CGPoint {
         unsafe {
             let cg = event.CGEvent() as *const __CGEvent;
@@ -30,7 +28,13 @@ impl Event {
         unsafe { event.eventType() }
     }
 
-    pub fn global_monitor<F>(mask: NSEventMask, handler: F)
+    pub fn stop(&self) {
+        unsafe {
+            let () = msg_send![class!(NSEvent), removeMonitor: self.monitor_id];
+        }
+    }
+
+    pub fn global_monitor<F>(mask: NSEventMask, handler: F) -> Self
     where
         F: Fn(id) -> Option<id> + Send + Sync + 'static,
     {
@@ -40,6 +44,10 @@ impl Event {
 
         unsafe {
             let monitor: id = msg_send![class!(NSEvent), addGlobalMonitorForEventsMatchingMask:mask handler:&*block];
+
+            EventMonitor {
+                monitor_id: monitor,
+            }
         }
     }
 }

@@ -7,13 +7,16 @@ mod commands;
 mod patch_window;
 mod window_manager;
 
-use commands::{change_window_position, get_screens, set_current_window_position};
+use commands::{change_window_position, get_screens};
 use patch_window::PatchWindow;
 use tauri::{ActivationPolicy, Manager, SystemTray, SystemTrayEvent};
-use window_manager::WindowManager;
+use tauri_plugin_fs_watch::Watcher;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
-use crate::window_manager::data::Point;
+use crate::{
+    commands::{set_current_window_position, start_window_manager, stop_window_manager, send_message},
+    window_manager::data::Point,
+};
 
 fn main() {
     let builder = tauri::Builder::default();
@@ -26,15 +29,13 @@ fn main() {
 
             let main_window = app.get_window("main").unwrap();
             let statusbar_window = app.get_window("statusbar").unwrap();
-            let window_manager = WindowManager::new(app);
 
-            window_manager.start();
-            main_window.open_devtools();
+            // main_window.open_devtools();
 
             #[cfg(target_os = "macos")]
             {
-                main_window.clear_decoration();
-                statusbar_window.remove_title();
+                main_window.setup_overlay();
+                statusbar_window.setup_statusbar();
                 apply_vibrancy(
                     &statusbar_window,
                     NSVisualEffectMaterial::Menu,
@@ -46,22 +47,28 @@ fn main() {
 
             Ok(())
         })
+        .plugin(
+            Watcher::default()
+        )
         .invoke_handler(tauri::generate_handler![
             change_window_position,
+            start_window_manager,
+            stop_window_manager,
             set_current_window_position,
-            get_screens
+            get_screens,
+            send_message
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {
                 position, size: _, ..
             } => {
-                app.emit_all(
+                if let Ok(_) = app.emit_all(
                     "on_statusbar_click",
                     &Point {
                         x: position.x,
                         y: position.y,
                     },
-                );
+                    ) {}
             }
             _ => {}
         })

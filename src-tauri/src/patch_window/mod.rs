@@ -1,7 +1,7 @@
 use cocoa::{
     appkit::{
         NSMainMenuWindowLevel, NSWindow, NSWindowCollectionBehavior, NSWindowStyleMask,
-        NSWindowTitleVisibility,
+        NSWindowTitleVisibility
     },
     base::id,
 };
@@ -9,12 +9,12 @@ use objc::{msg_send, sel, sel_impl};
 use tauri::Window as TauriWindow;
 
 pub trait PatchWindow {
-    fn clear_decoration(&self);
-    fn remove_title(&self);
+    fn setup_overlay(&self);
+    fn setup_statusbar(&self);
 }
 
 impl PatchWindow for TauriWindow {
-    fn remove_title(&self) {
+    fn setup_statusbar(&self) {
         let ns_win = self.ns_window().unwrap() as id;
         unsafe {
             ns_win.setStyleMask_(
@@ -33,7 +33,7 @@ impl PatchWindow for TauriWindow {
         }
     }
 
-    fn clear_decoration(&self) {
+    fn setup_overlay(&self) {
         let ns_win = self.ns_window().unwrap() as id;
         unsafe {
             let () = msg_send![ns_win, invalidateShadow];
@@ -42,9 +42,8 @@ impl PatchWindow for TauriWindow {
                 NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces,
             );
             ns_win.setHasShadow_(false);
-
-            // ns_win.setLevel_((NSMainMenuWindowLevel + 1) as i64);
-            // ns_win.setIgnoresMouseEvents_(true)
+            // ns_win.setLevel_(9999999);
+            // ns_win.setIgnoresMouseEvents_(true);
         }
     }
 }

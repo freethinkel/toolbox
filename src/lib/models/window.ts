@@ -22,5 +22,9 @@ export type Frame = {
 
 export type Screen = {
 	frame: Frame;
-	visibleFrame: Frame;
+	visible_frame: Frame;
+	cocoa: {
+		frame: Frame;
+		visible_frame: Frame;
+	};
 };

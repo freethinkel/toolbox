@@ -1,14 +1,14 @@
 import './style.css';
 import { window } from '@tauri-apps/api';
-import Overlay from './apps/Overlay.svelte';
-import Statusbar from './apps/Statusbar.svelte';
+import { init as initOverlayModule } from '$lib/modules/overlay';
+import { init as initStatusbarModule } from '$lib/modules/statusbar';
 
 const appTarget = document.getElementById('app');
-
 const windowLabel = window.getCurrent().label;
-console.log(windowLabel);
 
 ({
-	statusbar: () => new Statusbar({ target: appTarget }),
-	main: () => new Overlay({ target: appTarget }),
+  statusbar: () => initStatusbarModule(appTarget),
+  main: () => initOverlayModule(appTarget),
 }[windowLabel]?.());
+
+// configStore.init();
