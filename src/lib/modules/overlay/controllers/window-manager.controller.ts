@@ -5,6 +5,7 @@ import {
   Frame,
 } from '$lib/modules/shared/models';
 import { ChannelService } from '$lib/modules/shared/services';
+import { ConfigController } from '$lib/modules/shared/controllers';
 import { writable } from 'svelte/store';
 import { AreaCalculator, SnapArea } from './area-calculator.controller';
 
@@ -35,6 +36,9 @@ export class WindowManagerController {
           this.stop();
         }
       }
+    });
+    ConfigController.instance.config.subscribe((config) => {
+      this.areaCalculator.config = config;
     });
 
     ChannelService.instance.subscribeWindowManager((event) => {

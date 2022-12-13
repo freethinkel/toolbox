@@ -4,7 +4,7 @@ import {
   PhysicalPosition,
 } from '@tauri-apps/api/window';
 import { ChannelService } from '$lib/modules/shared/services';
-import type { Frame } from '$lib/modules/shared';
+import type { Frame } from '$lib/modules/shared/models';
 import { process } from '@tauri-apps/api';
 
 const WINDOW_SIZE = { width: 250, height: 120 };

@@ -48,7 +48,7 @@ export class ConfigReaderService {
       }
 
       const configText = await fs.readTextFile(configPath);
-      const parsed = YAML.parse(configText);
+      const parsed = YAML.parse(configText) || {};
 
       return Config.normalize(Config.fromMap(parsed));
     } catch (err) {

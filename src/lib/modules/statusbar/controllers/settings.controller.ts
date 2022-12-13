@@ -1,5 +1,5 @@
 import { ChannelService, StorageService } from '$lib/modules/shared/services';
-import { derived, writable } from 'svelte/store';
+import { derived, get, writable } from 'svelte/store';
 
 export class SettingsController {
   static readonly instance = new SettingsController();
@@ -16,15 +16,21 @@ export class SettingsController {
     this._caffeinateEnabled.set(
       Boolean(await StorageService.instance.read('caffeinateEnabled'))
     );
+
+    this.changeWindowManagerState(get(this.windowManagerEnabled));
+  }
+
+  private changeWindowManagerState(state: boolean) {
+    ChannelService.instance.broadcastEvent({
+      type: 'window_manager_enabled',
+      enabled: state,
+    });
   }
 
   setWindowManager(state: boolean) {
     this._windowManagerEnabled.set(state);
     StorageService.instance.write('windowManagerEnabled', state);
-    ChannelService.instance.broadcastEvent({
-      type: 'window_manager_enabled',
-      enabled: state,
-    });
+    this.changeWindowManagerState(state);
   }
 
   setCaffeinate(state: boolean) {

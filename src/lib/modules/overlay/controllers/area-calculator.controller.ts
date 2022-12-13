@@ -1,4 +1,4 @@
-import type { Config } from '$lib/models/config';
+import type { Config } from '$lib/modules/shared/models';
 import type {
   GlobalMouseEvent,
   Frame,
@@ -156,7 +156,6 @@ export class AreaCalculator {
     if (!event) {
       return;
     }
-    console.log('from mouse event', this.currentScreen);
     const point = event.mousePoint;
     const monitor = this.currentScreen.normalized.frame;
     const sensitive = this.getActivatedSize();

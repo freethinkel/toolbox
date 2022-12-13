@@ -16,7 +16,7 @@ export class Config {
   static default: Config = {
     windowPadding: 10.0,
     windowGap: 10.0,
-    accentColor: '#fcb',
+    accentColor: '#0a84ff',
     borderWidth: 2.0,
     borderRadius: 10.0,
   };

@@ -1,4 +1,4 @@
-import { Config } from '$lib/modules/shared';
+import { Config } from '$lib/modules/shared/models';
 import { ConfigReaderService } from '$lib/modules/shared/services';
 import { writable } from 'svelte/store';
 

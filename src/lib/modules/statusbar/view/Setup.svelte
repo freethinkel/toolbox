@@ -1,18 +1,15 @@
 <script lang="ts">
   import { Footer, Toggle } from '$lib/modules/shared/components';
-  import { onMount } from 'svelte';
   import { SettingsController } from '../controllers/settings.controller';
   import { StatusbarController } from '../controllers/statusbar.controller';
 
-  const statusbarController = new StatusbarController();
-  const settingsContoller = new SettingsController();
+  const statusbarController = StatusbarController.instance;
+  const settingsContoller = SettingsController.instance;
 
   const { windowManagerEnabled, caffeinateEnabled } = settingsContoller;
 
-  onMount(async () => {
-    statusbarController.init();
-    settingsContoller.init();
-  });
+  statusbarController.init();
+  settingsContoller.init();
 </script>
 
 <div class="wrapper">

@@ -4,7 +4,6 @@
   export let checked = false;
 
   const dispatch = createEventDispatcher();
-
   const size = 20;
 
   const onChange = (event: Event) => {
