@@ -1,5 +1,9 @@
 import type { Config } from '$lib/models/config';
-import type { GlobalMouseEvent, Frame, Screen } from '../../../shared/models';
+import type {
+  GlobalMouseEvent,
+  Frame,
+  Screen,
+} from '$lib/modules/shared/models';
 
 export enum SnapArea {
   left = 'left',
@@ -152,6 +156,7 @@ export class AreaCalculator {
     if (!event) {
       return;
     }
+    console.log('from mouse event', this.currentScreen);
     const point = event.mousePoint;
     const monitor = this.currentScreen.normalized.frame;
     const sensitive = this.getActivatedSize();

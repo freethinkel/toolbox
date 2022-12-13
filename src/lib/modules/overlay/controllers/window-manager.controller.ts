@@ -27,7 +27,6 @@ export class WindowManagerController {
   currentArea = writable<null | SnapArea>(null);
 
   async init() {
-    console.log('init wm');
     ChannelService.instance.listenBroadcast((event) => {
       if (event.type === 'window_manager_enabled') {
         if (event.enabled) {
@@ -68,7 +67,7 @@ export class WindowManagerController {
     }
 
     const isMouseOut = this.isMouseOutScreen(
-      this.areaCalculator.currentScreen.frame,
+      this.areaCalculator.currentScreen.original.frame,
       point
     );
 

@@ -13,7 +13,7 @@
 </script>
 
 <div class="canvas">
-  {#if rect}
+  {#if $rect}
     <div transition:fade={{ duration: 200, easing: circInOut }}>
       <Rect
         height={$rect.size.height}

@@ -15,7 +15,6 @@ export class Screen {
   }
 
   static fromMap(map: any): Screen {
-    console.log('screens', map);
     return new Screen(
       {
         visibleFrame: map.visible_frame,

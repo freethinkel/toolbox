@@ -2,7 +2,7 @@ import { invoke } from '@tauri-apps/api';
 import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import {
   type Frame,
-  type GlobalMouseEvent,
+  GlobalMouseEvent,
   Screen,
   type Position,
   type WindowInfo,
@@ -94,7 +94,7 @@ export class ChannelService {
       await listen('window_manager', (event) => {
         const payload = event.payload as any;
         for (let cb of this._windowManagerListeners) {
-          cb(payload);
+          cb(GlobalMouseEvent.fromMap(payload));
         }
       })
     );
