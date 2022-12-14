@@ -1,7 +1,21 @@
-# Tauri + Svelte + Typescript
+# Toolbox for MacOS
 
-This template should help get you started developing with Tauri, Svelte and TypeScript in Vite.
+Features
 
-## Recommended IDE Setup
+- simple window manager
+- caffeinate
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+Configuration file must be placed at one of the following places (in order):
+
+- `$HOME/.config/toolbox/config.yml`
+- `$HOME/.toolbox.yml`
+
+Sample:
+
+```yml
+window_padding: 10.0
+window_gap: 10.0
+border_width: 2.0
+border_radius: 10.0
+accent_color: '#44fcee'
+```
