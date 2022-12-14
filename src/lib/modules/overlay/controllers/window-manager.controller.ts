@@ -137,7 +137,9 @@ export class WindowManagerController {
     this.screenUpdating = false;
   }
 
-  private stop() {}
+  private async stop() {
+    await ChannelService.instance.stopWindowManager();
+  }
 
   private start() {
     this.updateScreen();

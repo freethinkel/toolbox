@@ -17,7 +17,7 @@
     <Toggle
       checked={$windowManagerEnabled}
       on:change={({ detail }) => settingsContoller.setWindowManager(detail)}
-      >Window manager</Toggle
+      >Window Manager</Toggle
     >
     <Toggle
       checked={$caffeinateEnabled}

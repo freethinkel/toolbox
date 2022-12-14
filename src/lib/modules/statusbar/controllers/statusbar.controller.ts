@@ -6,6 +6,9 @@ import {
 import { ChannelService } from '$lib/modules/shared/services';
 import type { Frame } from '$lib/modules/shared/models';
 import { process } from '@tauri-apps/api';
+import { confirm } from '@tauri-apps/api/dialog';
+import { SettingsController } from './settings.controller';
+import { CaffeinateService } from '$lib/modules/shared/services/caffeinate.service';
 
 const WINDOW_SIZE = { width: 250, height: 120 };
 
@@ -14,7 +17,6 @@ export class StatusbarController {
 
   init() {
     appWindow.setSize(new LogicalSize(WINDOW_SIZE.width, WINDOW_SIZE.height));
-    // appWindow.show();
 
     ChannelService.instance.onStatusbarClick(async (position) => {
       const isVisible = await appWindow.isVisible();
@@ -35,10 +37,37 @@ export class StatusbarController {
         appWindow.hide();
       }
     });
+
+    SettingsController.instance.caffeinateEnabled.subscribe((state) => {
+      if (state) {
+        CaffeinateService.instance.start();
+      } else {
+        CaffeinateService.instance.stop();
+      }
+    });
+
+    window.onclose = async () => {
+      await this.onExit();
+    };
+
+    window.onkeydown = (event: KeyboardEvent) => {
+      if (event.metaKey && event.code === 'keyQ') {
+        this.exit();
+      }
+    };
+
+    appWindow.onCloseRequested(async () => {
+      await this.onExit();
+    });
   }
 
-  exit() {
+  async exit() {
+    await this.onExit();
     process.exit();
+  }
+
+  private async onExit() {
+    await CaffeinateService.instance.stop();
   }
 
   private setWindowFrame(frame: Frame) {

@@ -167,6 +167,13 @@ impl WindowManager {
         let last_win: Mutex<Option<ActiveWindow>> = Mutex::new(None.into());
         let app = Mutex::new(self.app.clone());
 
+        match &self.monitor {
+            Some(monitor) => {
+                monitor.stop();
+            },
+            None => {},
+        }
+
         let monitor = EventMonitor::global_monitor(
             NSEventMask::NSLeftMouseDownMask
                 | NSEventMask::NSLeftMouseUpMask

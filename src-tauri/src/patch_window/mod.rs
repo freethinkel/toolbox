@@ -29,7 +29,7 @@ impl PatchWindow for TauriWindow {
                 NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces,
             );
             ns_win.setHidesOnDeactivate_(true);
-            ns_win.setMovableByWindowBackground_(true);
+            // ns_win.setMovableByWindowBackground_(true);
         }
     }
 
@@ -42,8 +42,8 @@ impl PatchWindow for TauriWindow {
                 NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces,
             );
             ns_win.setHasShadow_(false);
-            // ns_win.setLevel_(9999999);
-            // ns_win.setIgnoresMouseEvents_(true);
+            ns_win.setLevel_(9999999);
+            ns_win.setIgnoresMouseEvents_(true);
         }
     }
 }

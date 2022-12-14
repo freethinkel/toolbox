@@ -7,13 +7,13 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "toolbox",
-    "version": "0.0.0"
+    "productName": "Toolbox",
+    "version": "1.0.0"
   },
   "tauri": {
     "macOSPrivateApi": true,
     "systemTray": {
-      "iconPath": "icons/icon.png",
+      "iconPath": "icons/statusbar-icon.png",
       "iconAsTemplate": true
     },
     "allowlist": {
@@ -24,6 +24,19 @@
       "fs": {
         "all": true,
         "scope": ["$HOME/*"]
+      },
+      "shell": {
+        "all": true,
+        "execute": true,
+        "sidecar": true,
+        "open": true,
+        "scope": [
+          {
+            "name": "caffeinate",
+            "cmd": "caffeinate",
+            "args": true
+          }
+        ]
       }
     },
     "bundle": {

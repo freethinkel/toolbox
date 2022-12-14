@@ -1,4 +1,4 @@
-use crate::window_manager::{data::Screen, event::EventMonitor, WindowManager};
+use crate::window_manager::{data::Screen, WindowManager};
 use cocoa::base::id;
 use tauri::{command, AppHandle, Window, Manager};
 
@@ -32,7 +32,7 @@ pub fn set_current_window_position(window: Window, payload: String) {
 #[command]
 pub fn start_window_manager(app: AppHandle) {
     unsafe {
-        match WINDOW_MANAGER_GLOBAL.clone() {
+        match &WINDOW_MANAGER_GLOBAL {
             Some(window_manager) => {
                 window_manager.stop();
                 WINDOW_MANAGER_GLOBAL = None;
@@ -42,7 +42,7 @@ pub fn start_window_manager(app: AppHandle) {
     }
     let window_manager = WindowManager::new(app);
 
-    window_manager.start();
+    let window_manager = window_manager.start();
     unsafe {
         WINDOW_MANAGER_GLOBAL = Some(window_manager);
     }
@@ -51,7 +51,7 @@ pub fn start_window_manager(app: AppHandle) {
 #[command]
 pub fn stop_window_manager() {
     unsafe {
-        let window_manager_cloned = WINDOW_MANAGER_GLOBAL.clone();
+        let window_manager_cloned = &WINDOW_MANAGER_GLOBAL;
 
         match window_manager_cloned {
             Some(window_manager_cloned) => {
