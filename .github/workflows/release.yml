@@ -18,13 +18,15 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 16
-          args: -- --target universal-apple-darwin
       - name: install pnpm
         run: npm i -g pnpm
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: install app dependencies and build it
         run: pnpm install && pnpm build
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src-tauri/target"
       - uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,3 +36,4 @@ jobs:
           releaseBody: 'See the assets to download this version and install.'
           releaseDraft: true
           prerelease: false
+          args: -- --target universal-apple-darwin
