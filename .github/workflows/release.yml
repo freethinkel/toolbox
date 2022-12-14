@@ -63,7 +63,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg
+          asset_path: ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox_${{ VERSION_WITHOUT_SUFFIX  }}_universal.dmg
           asset_name: Toolboard.dmg
           asset_content_type: application/octet-stream
 
