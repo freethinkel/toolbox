@@ -22,11 +22,11 @@ jobs:
         run: npm i -g pnpm
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
-      - name: Install app dependencies and build it
-        run: pnpm install && pnpm build
+      - name: Install app dependencies
+        run: pnpm install
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: "src-tauri/target"
+          workspaces: "src-tauri"
       - name: Add arm support
         run: rustup target add aarch64-apple-darwin
 
