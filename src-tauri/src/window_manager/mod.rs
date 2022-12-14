@@ -8,7 +8,7 @@ use cocoa::{
         CGPoint, NSEventMask, NSEventType,
         NSScreen, NSWindow,
     },
-    base::{id, nil},
+    base::{id, nil, YES},
     foundation::{NSArray, NSPoint, NSRect, NSSize},
 };
 use core_graphics::geometry::{CGRect, CGSize};
@@ -131,7 +131,7 @@ impl WindowManager {
                     origin,
                     size,
                 },
-                true,
+                YES,
             )
         }
     }
