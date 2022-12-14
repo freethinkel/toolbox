@@ -14,16 +14,20 @@
 
 <div class="wrapper">
   <div class="controls">
-    <Toggle
-      checked={$windowManagerEnabled}
-      on:change={({ detail }) => settingsContoller.setWindowManager(detail)}
-      >Window Manager</Toggle
-    >
-    <Toggle
-      checked={$caffeinateEnabled}
-      on:change={({ detail }) => settingsContoller.setCaffeinate(detail)}
-      >Caffeinate</Toggle
-    >
+    <div class="toggle__wrapper">
+      <Toggle
+        checked={$windowManagerEnabled}
+        on:change={({ detail }) => settingsContoller.setWindowManager(detail)}
+        >Window Manager</Toggle
+      >
+    </div>
+    <div class="toggle__wrapper">
+      <Toggle
+        checked={$caffeinateEnabled}
+        on:change={({ detail }) => settingsContoller.setCaffeinate(detail)}
+        >Caffeinate</Toggle
+      >
+    </div>
   </div>
 
   <div class="footer">
@@ -40,10 +44,11 @@
 
   .controls {
     flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
     padding: 20px 12px;
+  }
+
+  .toggle__wrapper + .toggle__wrapper {
+    margin-top: 10px;
   }
 
   .footer {
