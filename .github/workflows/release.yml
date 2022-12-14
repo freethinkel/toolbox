@@ -19,6 +19,8 @@ jobs:
         with:
           node-version: 16
           args: -- --target universal-apple-darwin
+        run:
+          - npm i -g pnpm
       - name: install Rust stable
         uses: dtolnay/rust-toolchain@stable
       - name: install app dependencies and build it
