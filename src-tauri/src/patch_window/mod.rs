@@ -3,7 +3,7 @@ use cocoa::{
         NSMainMenuWindowLevel, NSWindow, NSWindowCollectionBehavior, NSWindowStyleMask,
         NSWindowTitleVisibility
     },
-    base::id,
+    base::{id, YES, NO},
 };
 use objc::{msg_send, sel, sel_impl};
 use tauri::Window as TauriWindow;
@@ -21,14 +21,14 @@ impl PatchWindow for TauriWindow {
                 NSWindowStyleMask::NSFullSizeContentViewWindowMask
                     | NSWindowStyleMask::NSTitledWindowMask,
             );
-            ns_win.setTitlebarAppearsTransparent_(true);
-            ns_win.setShowsResizeIndicator_(false);
+            ns_win.setTitlebarAppearsTransparent_(YES);
+            ns_win.setShowsResizeIndicator_(NO);
             ns_win.setTitleVisibility_(NSWindowTitleVisibility::NSWindowTitleHidden);
             ns_win.setLevel_((NSMainMenuWindowLevel + 1) as i64);
             ns_win.setCollectionBehavior_(
                 NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces,
             );
-            ns_win.setHidesOnDeactivate_(true);
+            ns_win.setHidesOnDeactivate_(YES);
             // ns_win.setMovableByWindowBackground_(true);
         }
     }
@@ -41,9 +41,9 @@ impl PatchWindow for TauriWindow {
             ns_win.setCollectionBehavior_(
                 NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces,
             );
-            ns_win.setHasShadow_(false);
+            ns_win.setHasShadow_(NO);
             ns_win.setLevel_(9999999);
-            ns_win.setIgnoresMouseEvents_(true);
+            ns_win.setIgnoresMouseEvents_(YES);
         }
     }
 }
