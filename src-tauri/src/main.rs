@@ -11,16 +11,20 @@ use commands::{change_window_position, get_screens};
 use patch_window::PatchWindow;
 use tauri::{ActivationPolicy, Manager, SystemTray, SystemTrayEvent};
 use tauri_plugin_fs_watch::Watcher;
+use window_manager::WindowManager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 use crate::{
-    commands::{set_current_window_position, start_window_manager, stop_window_manager, send_message},
+    commands::{
+        send_message, set_current_window_position, start_window_manager, stop_window_manager,
+    },
     window_manager::data::Point,
 };
 
 fn main() {
     let builder = tauri::Builder::default();
     let tray = SystemTray::new();
+    WindowManager::check_permission();
 
     builder
         .setup(|app| {
@@ -47,9 +51,7 @@ fn main() {
 
             Ok(())
         })
-        .plugin(
-            Watcher::default()
-        )
+        .plugin(Watcher::default())
         .invoke_handler(tauri::generate_handler![
             change_window_position,
             start_window_manager,
@@ -68,7 +70,7 @@ fn main() {
                         x: position.x,
                         y: position.y,
                     },
-                    ) {}
+                ) {}
             }
             _ => {}
         })

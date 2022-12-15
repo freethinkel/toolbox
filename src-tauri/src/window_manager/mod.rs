@@ -130,19 +130,24 @@ impl WindowManager {
     pub fn set_window_position(win_data: SetWindowPosition) {
         let win = WindowElement::get_window_from_id(win_data.pid, win_data.id);
 
-        WindowElement::set_frame(
-            win.unwrap(),
-            CGRect {
-                origin: CGPoint {
-                    x: win_data.position.x,
-                    y: win_data.position.y,
-                },
-                size: CGSize {
-                    width: win_data.size.width,
-                    height: win_data.size.height,
-                },
-            },
-        );
+        match win {
+            Ok(win) => {
+                WindowElement::set_frame(
+                    win,
+                    CGRect {
+                        origin: CGPoint {
+                            x: win_data.position.x,
+                            y: win_data.position.y,
+                        },
+                        size: CGSize {
+                            width: win_data.size.width,
+                            height: win_data.size.height,
+                        },
+                    },
+                );
+            }
+            Err(err) => {}
+        }
     }
 
     pub fn stop(&self) {
@@ -157,8 +162,6 @@ impl WindowManager {
     pub fn start(&self) -> WindowManager {
         let last_win: Mutex<Option<ActiveWindow>> = Mutex::new(None.into());
         let app = Mutex::new(self.app.clone());
-
-        WindowManager::check_permission();
 
         match &self.monitor {
             Some(monitor) => {

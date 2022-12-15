@@ -19,8 +19,8 @@ pub struct WindowElement {}
 
 impl WindowElement {
     pub fn set_frame(window: AXUIElementRef, rect: CGRect) {
-        WindowElement::set_position(window, rect.origin);
         WindowElement::set_size(window, rect.size);
+        WindowElement::set_position(window, rect.origin);
     }
 
     pub fn set_position(window: AXUIElementRef, mut point: CGPoint) {
