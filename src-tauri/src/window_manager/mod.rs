@@ -4,15 +4,13 @@ mod window;
 
 use active_win_pos_rs::{get_active_window, ActiveWindow};
 use cocoa::{
-    appkit::{
-        CGPoint, NSEventMask, NSEventType,
-        NSScreen, NSWindow,
-    },
+    appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSWindow},
     base::{id, nil, YES},
     foundation::{NSArray, NSPoint, NSRect, NSSize},
 };
 use core_graphics::geometry::{CGRect, CGSize};
 use data::{MouseEvent, Point, WindowInfo};
+use macos_accessibility_client::accessibility::application_is_trusted_with_prompt;
 use std::sync::Mutex;
 use tauri::{AppHandle, Manager};
 use window::WindowElement;
@@ -50,17 +48,18 @@ fn nsrect_to_cgrect(rect: NSRect) -> CGRect {
 
 impl WindowManager {
     pub(crate) fn new(app: AppHandle) -> Self {
-        WindowManager {
-            app,
-            monitor: None,
-        }
+        WindowManager { app, monitor: None }
+    }
+
+    pub fn check_permission() {
+        application_is_trusted_with_prompt();
     }
 
     pub fn get_screens() -> Vec<Screen> {
         unsafe {
             let screens = NSScreen::screens(nil);
             let mut frames: Vec<Screen> = vec![];
-            (0.. screens.count()).for_each(|i| {
+            (0..screens.count()).for_each(|i| {
                 let frame = NSScreen::frame(screens.objectAtIndex(i));
                 let visible_frame = NSScreen::visibleFrame(screens.objectAtIndex(i));
                 let cgframe = nsrect_to_cgrect(NSScreen::frame(screens.objectAtIndex(i)));
@@ -125,15 +124,7 @@ impl WindowManager {
             y: rect.position.y,
         };
 
-        unsafe {
-            window.setFrame_display_(
-                NSRect {
-                    origin,
-                    size,
-                },
-                YES,
-            )
-        }
+        unsafe { window.setFrame_display_(NSRect { origin, size }, YES) }
     }
 
     pub fn set_window_position(win_data: SetWindowPosition) {
@@ -167,11 +158,13 @@ impl WindowManager {
         let last_win: Mutex<Option<ActiveWindow>> = Mutex::new(None.into());
         let app = Mutex::new(self.app.clone());
 
+        WindowManager::check_permission();
+
         match &self.monitor {
             Some(monitor) => {
                 monitor.stop();
-            },
-            None => {},
+            }
+            None => {}
         }
 
         let monitor = EventMonitor::global_monitor(
@@ -274,7 +267,10 @@ impl WindowManager {
                                             };
                                             match app.lock() {
                                                 Ok(app) => {
-                                                    if let Ok(_) = app.emit_all("window_manager", payload) {}
+                                                    if let Ok(_) =
+                                                        app.emit_all("window_manager", payload)
+                                                    {
+                                                    }
                                                 }
                                                 Err(_) => {}
                                             }
