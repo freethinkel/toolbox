@@ -32,8 +32,8 @@ jobs:
 
       - name: "Build app"
         run: |
-          - pnpm tauri build --target universal-apple-darwin
-          - mv ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox.dmg
+          pnpm tauri build --target universal-apple-darwin
+          mv ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox.dmg
 
       - name: Create Version Number
         id: versions
