@@ -31,7 +31,9 @@ jobs:
         run: rustup target add aarch64-apple-darwin
 
       - name: "Build app"
-        run: "pnpm tauri build --target universal-apple-darwin"
+        run: |
+          - pnpm tauri build --target universal-apple-darwin
+          - mv ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox.dmg
 
       - name: Create Version Number
         id: versions
@@ -63,7 +65,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox_${{ env.VERSION_WITHOUT_SUFFIX }}_universal.dmg
+          asset_path: ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox.dmg
           asset_name: Toolboard.dmg
           asset_content_type: application/octet-stream
 
