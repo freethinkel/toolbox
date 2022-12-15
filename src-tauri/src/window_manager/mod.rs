@@ -128,7 +128,7 @@ impl WindowManager {
     }
 
     pub fn set_window_position(win_data: SetWindowPosition) {
-        let win = WindowElement::get_window_from_id(win_data.pid, win_data.id);
+        let win = WindowElement::get_window_from_id(win_data.pid, win_data.id.to_string());
 
         match win {
             Ok(win) => {

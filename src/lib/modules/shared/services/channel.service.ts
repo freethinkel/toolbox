@@ -55,8 +55,13 @@ export class ChannelService {
     };
   }
 
+  async setDebugMode(enabled: boolean) {
+    await invoke('set_debug_mode', { enabled });
+  }
+
   async setWindowPosition(frame: WindowInfo) {
-    await invoke('change_window_position', { payload: JSON.stringify(frame) });
+    console.log('set_window_position', frame);
+    await invoke('change_window_position', { payload: frame });
   }
 
   async broadcastEvent<T extends any>(payload: T) {

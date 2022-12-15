@@ -6,9 +6,9 @@ import {
 import { ChannelService } from '$lib/modules/shared/services';
 import type { Frame } from '$lib/modules/shared/models';
 import { process } from '@tauri-apps/api';
-import { confirm } from '@tauri-apps/api/dialog';
 import { SettingsController } from './settings.controller';
 import { CaffeinateService } from '$lib/modules/shared/services/caffeinate.service';
+import { ConfigController } from '$lib/modules/shared/controllers';
 
 const WINDOW_SIZE = { width: 250, height: 120 };
 
@@ -44,6 +44,11 @@ export class StatusbarController {
       } else {
         CaffeinateService.instance.stop();
       }
+    });
+
+    ConfigController.instance.config.subscribe((config) => {
+      ChannelService.instance.setDebugMode(Boolean(config.debug));
+      console.log(config);
     });
 
     window.onclose = async () => {

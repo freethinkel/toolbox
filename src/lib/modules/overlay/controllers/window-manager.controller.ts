@@ -46,7 +46,11 @@ export class WindowManagerController {
 
       const handler = {
         mouse_up: () => {
+          if (ConfigController.instance.isDebugMode) {
+            console.log('on_mouse_up', event, this);
+          }
           if (this.lastPosition) {
+            this.lastPosition = event;
             this.onMouseUp();
           }
           this.lastPosition = null;

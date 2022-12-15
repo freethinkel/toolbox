@@ -1,9 +1,13 @@
 import { Config } from '$lib/modules/shared/models';
 import { ConfigReaderService } from '$lib/modules/shared/services';
-import { writable } from 'svelte/store';
+import { get, writable } from 'svelte/store';
 
 export class ConfigController {
   static readonly instance = new ConfigController();
+
+  get isDebugMode(): boolean {
+    return get(this.config).debug;
+  }
 
   config = writable(Config.default);
 

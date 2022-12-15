@@ -26,12 +26,13 @@ jobs:
         run: pnpm install
       - uses: Swatinem/rust-cache@v2
         with:
-          workspaces: "src-tauri"
+          workspaces: 'src-tauri'
       - name: Add arm support
         run: rustup target add aarch64-apple-darwin
 
-      - name: "Build app"
+      - name: 'Build app'
         run: |
+          rm -rf ./src-tauri/target/universal-apple-darwin
           pnpm tauri build --target universal-apple-darwin
           mv ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/*.dmg ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox.dmg
 
@@ -68,4 +69,3 @@ jobs:
           asset_path: ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox.dmg
           asset_name: Toolboard.dmg
           asset_content_type: application/octet-stream
-

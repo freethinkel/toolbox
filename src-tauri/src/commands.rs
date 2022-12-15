@@ -1,18 +1,18 @@
-use crate::window_manager::{data::Screen, WindowManager};
-use cocoa::base::id;
-use tauri::{command, AppHandle, Window, Manager};
+use crate::window_manager::{
+    data::{Screen, SetWindowPosition},
+    WindowManager,
+};
+use cocoa::{
+    appkit::NSWindow,
+    base::{id, NO, YES},
+};
+use tauri::{command, AppHandle, Manager, Window};
 
 pub static mut WINDOW_MANAGER_GLOBAL: Option<WindowManager> = None;
 
 #[command]
-pub async fn change_window_position(payload: String) {
-    let parsed = serde_json::from_str(payload.as_str());
-    match parsed {
-        Ok(data) => {
-            WindowManager::set_window_position(data);
-        }
-        Err(_) => {}
-    }
+pub async fn change_window_position(payload: SetWindowPosition) {
+    WindowManager::set_window_position(payload);
 }
 #[command]
 pub fn set_current_window_position(window: Window, payload: String) {
@@ -36,8 +36,8 @@ pub fn start_window_manager(app: AppHandle) {
             Some(window_manager) => {
                 window_manager.stop();
                 WINDOW_MANAGER_GLOBAL = None;
-            },
-            None => {},
+            }
+            None => {}
         }
     }
     let window_manager = WindowManager::new(app);
@@ -69,8 +69,29 @@ pub fn get_screens() -> Option<Vec<Screen>> {
     Some(screens)
 }
 
+#[command]
+pub fn send_message(app: AppHandle, payload: String) {
+    app.emit_all("broadcast", payload);
+}
 
 #[command]
-pub fn send_message(app: AppHandle, payload: String)  {
-    app.emit_all("broadcast", payload);
+pub fn set_debug_mode(app: AppHandle, enabled: bool) {
+    let main_ns_win: id = app.get_window("main").unwrap().ns_window().unwrap() as id;
+    unsafe {
+        if enabled {
+            main_ns_win.setLevel_(0);
+            main_ns_win.setIgnoresMouseEvents_(NO);
+        } else {
+            main_ns_win.setLevel_(99999);
+            main_ns_win.setIgnoresMouseEvents_(YES);
+        }
+    }
+
+    app.windows().iter().for_each(|(_, window)| {
+        if enabled {
+            window.open_devtools();
+        } else {
+            window.close_devtools();
+        }
+    });
 }

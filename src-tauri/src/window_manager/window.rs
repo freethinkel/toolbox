@@ -21,6 +21,7 @@ impl WindowElement {
     pub fn set_frame(window: AXUIElementRef, rect: CGRect) {
         WindowElement::set_size(window, rect.size);
         WindowElement::set_position(window, rect.origin);
+        WindowElement::set_size(window, rect.size);
     }
 
     pub fn set_position(window: AXUIElementRef, mut point: CGPoint) {
@@ -47,16 +48,13 @@ impl WindowElement {
     pub fn get_window_from_id(pid: i32, id: String) -> Result<AXUIElementRef, ()> {
         let window_owner = unsafe { AXUIElementCreateApplication(pid) };
         let mut windows_ref: CFTypeRef = ptr::null();
-        if unsafe {
-            let x = AXUIElementCopyAttributeValue(
+
+        unsafe {
+            AXUIElementCopyAttributeValue(
                 window_owner,
                 CFString::new(kAXWindowsAttribute).as_concrete_TypeRef(),
                 &mut windows_ref as *mut CFTypeRef,
             );
-            x
-        } != kAXErrorSuccess
-        {
-            return Err(());
         }
 
         if windows_ref.is_null() {

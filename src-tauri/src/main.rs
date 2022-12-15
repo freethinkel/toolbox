@@ -9,17 +9,22 @@ mod window_manager;
 
 use commands::{change_window_position, get_screens};
 use patch_window::PatchWindow;
-use tauri::{ActivationPolicy, Manager, SystemTray, SystemTrayEvent};
+use tauri::{
+    embed_plist::embed_info_plist, ActivationPolicy, Manager, SystemTray, SystemTrayEvent,
+};
 use tauri_plugin_fs_watch::Watcher;
 use window_manager::WindowManager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
 
 use crate::{
     commands::{
-        send_message, set_current_window_position, start_window_manager, stop_window_manager,
+        send_message, set_current_window_position, set_debug_mode, start_window_manager,
+        stop_window_manager,
     },
     window_manager::data::Point,
 };
+
+embed_info_plist!("Info.plist");
 
 fn main() {
     let builder = tauri::Builder::default();
@@ -33,8 +38,6 @@ fn main() {
 
             let main_window = app.get_window("main").unwrap();
             let statusbar_window = app.get_window("statusbar").unwrap();
-
-            // main_window.open_devtools();
 
             #[cfg(target_os = "macos")]
             {
@@ -58,7 +61,8 @@ fn main() {
             stop_window_manager,
             set_current_window_position,
             get_screens,
-            send_message
+            send_message,
+            set_debug_mode
         ])
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::LeftClick {

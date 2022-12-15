@@ -4,6 +4,7 @@ export class Config {
   accentColor: string;
   borderWidth: number;
   borderRadius: number;
+  debug: boolean;
 
   constructor(self: Config) {
     this.windowPadding = self.windowPadding;
@@ -11,6 +12,7 @@ export class Config {
     this.accentColor = self.accentColor;
     this.borderWidth = self.borderWidth;
     this.borderRadius = self.borderRadius;
+    this.debug = self.debug;
   }
 
   static default: Config = {
@@ -19,6 +21,7 @@ export class Config {
     accentColor: '#0a84ff',
     borderWidth: 2.0,
     borderRadius: 10.0,
+    debug: false,
   };
 
   static normalize(config: Partial<Config>): Config {
@@ -29,6 +32,7 @@ export class Config {
         accentColor: config.accentColor ?? this.default.accentColor,
         borderWidth: Number(config.borderWidth),
         borderRadius: Number(config.borderRadius),
+        debug: Boolean(config.debug),
       }).map(([key, value]) => [
         key,
         typeof value === 'number' && isNaN(value) ? this.default[key] : value,
@@ -45,6 +49,7 @@ export class Config {
       accentColor: map.accent_color,
       borderWidth: map.borderWidth,
       borderRadius: map.borderRadius,
+      debug: map.debug,
     });
   }
 }
