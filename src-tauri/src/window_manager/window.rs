@@ -49,6 +49,8 @@ impl WindowElement {
         let window_owner = unsafe { AXUIElementCreateApplication(pid) };
         let mut windows_ref: CFTypeRef = ptr::null();
 
+        let id = id.parse::<u32>().unwrap();
+
         unsafe {
             AXUIElementCopyAttributeValue(
                 window_owner,
@@ -79,8 +81,9 @@ impl WindowElement {
                     window_id
                 };
 
-                if window_id.to_string() == id {
+                if window_id == id {
                     window_ax_option = Some(window_ax);
+                    break;
                 }
             }
             window_ax_option

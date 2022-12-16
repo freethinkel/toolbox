@@ -9,9 +9,7 @@ mod window_manager;
 
 use commands::{change_window_position, get_screens};
 use patch_window::PatchWindow;
-use tauri::{
-    embed_plist::embed_info_plist, ActivationPolicy, Manager, SystemTray, SystemTrayEvent,
-};
+use tauri::{ActivationPolicy, Manager, SystemTray, SystemTrayEvent};
 use tauri_plugin_fs_watch::Watcher;
 use window_manager::WindowManager;
 use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial, NSVisualEffectState};
@@ -23,8 +21,6 @@ use crate::{
     },
     window_manager::data::Point,
 };
-
-embed_info_plist!("Info.plist");
 
 fn main() {
     let builder = tauri::Builder::default();

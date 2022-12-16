@@ -2,15 +2,24 @@ pub mod data;
 pub mod event;
 mod window;
 
+use accessibility_sys::{
+    kAXTrustedCheckOptionPrompt, AXIsProcessTrusted, AXIsProcessTrustedWithOptions,
+};
 use active_win_pos_rs::{get_active_window, ActiveWindow};
 use cocoa::{
     appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSWindow},
     base::{id, nil, YES},
     foundation::{NSArray, NSPoint, NSRect, NSSize},
 };
+use core_foundation::{
+    base::TCFType,
+    boolean::CFBoolean,
+    dictionary::CFDictionary,
+    string::{CFString, CFStringRef},
+};
 use core_graphics::geometry::{CGRect, CGSize};
 use data::{MouseEvent, Point, WindowInfo};
-use macos_accessibility_client::accessibility::application_is_trusted_with_prompt;
+
 use std::sync::Mutex;
 use tauri::{AppHandle, Manager};
 use window::WindowElement;
@@ -52,7 +61,15 @@ impl WindowManager {
     }
 
     pub fn check_permission() {
-        application_is_trusted_with_prompt();
+        unsafe {
+            let is_trusted = AXIsProcessTrusted();
+            if !is_trusted {
+                let option_prompt = CFString::wrap_under_get_rule(kAXTrustedCheckOptionPrompt);
+                let dict: CFDictionary<CFString, CFBoolean> =
+                    CFDictionary::from_CFType_pairs(&[(option_prompt, CFBoolean::true_value())]);
+                AXIsProcessTrustedWithOptions(dict.as_concrete_TypeRef());
+            }
+        }
     }
 
     pub fn get_screens() -> Vec<Screen> {
@@ -146,7 +163,7 @@ impl WindowManager {
                     },
                 );
             }
-            Err(err) => {}
+            Err(_) => {}
         }
     }
 

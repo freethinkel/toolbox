@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Toolbox",
-    "version": "1.0.2"
+    "version": "1.0.3"
   },
   "tauri": {
     "macOSPrivateApi": true,
@@ -57,9 +57,10 @@
       "identifier": "ru.freethinkel.toolbox",
       "longDescription": "",
       "macOS": {
-        "entitlements": "../entitlements.plist",
+        "entitlements": null,
         "exceptionDomain": "",
         "frameworks": [],
+        "minimumSystemVersion": "10.14",
         "providerShortName": null,
         "signingIdentity": null
       },
