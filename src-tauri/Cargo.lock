@@ -3331,7 +3331,7 @@ dependencies = [
 
 [[package]]
 name = "toolbox"
-version = "2.0.0"
+version = "2.0.1"
 dependencies = [
  "accessibility",
  "accessibility-sys",
