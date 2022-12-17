@@ -67,5 +67,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./src-tauri/target/universal-apple-darwin/release/bundle/dmg/Toolbox.dmg
-          asset_name: Toolboard.dmg
+          asset_name: Toolbox.dmg
           asset_content_type: application/octet-stream

@@ -34,6 +34,9 @@ export class AreaCalculator {
   getActivatedSize() {
     const sensitive = 0.1;
     const screen = this.currentScreen;
+    if (!screen) {
+      return 100;
+    }
     return screen.normalized.visibleFrame.size.width >
       screen.normalized.visibleFrame.size.height
       ? screen.normalized.visibleFrame.size.height * sensitive
@@ -157,8 +160,12 @@ export class AreaCalculator {
       return;
     }
     const point = event.mousePoint;
-    const monitor = this.currentScreen.normalized.frame;
+    const monitor = this.currentScreen?.normalized?.frame;
     const sensitive = this.getActivatedSize();
+
+    if (!monitor) {
+      return;
+    }
 
     if (
       point.x >= monitor.position.x &&

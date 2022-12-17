@@ -25,7 +25,7 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-panel: #fff;
+    --color-panel: #242424;
     --color-text: rgba(255, 255, 255, 0.7);
     --color-title: rgba(255, 255, 255, 1);
     --color-border: rgba(255, 255, 255, 0.12);
@@ -36,6 +36,7 @@ body {
   margin: 0;
   height: 100vh;
   overflow: hidden;
+  transition: 0.3s opacity;
 }
 
 #app {

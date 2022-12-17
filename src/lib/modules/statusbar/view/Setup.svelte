@@ -1,24 +1,39 @@
 <script lang="ts">
   import { Footer, Toggle } from '$lib/modules/shared/components';
+  import { onMount } from 'svelte';
   import { SettingsController } from '../controllers/settings.controller';
   import { StatusbarController } from '../controllers/statusbar.controller';
+
+  let wrapperEl: HTMLElement;
 
   const statusbarController = StatusbarController.instance;
   const settingsContoller = SettingsController.instance;
 
-  const { windowManagerEnabled, caffeinateEnabled } = settingsContoller;
+  const { windowManagerEnabled, caffeinateEnabled, fancyZonesEnabled } =
+    settingsContoller;
 
-  statusbarController.init();
-  settingsContoller.init();
+  onMount(() => {
+    statusbarController.init();
+    settingsContoller.init();
+    statusbarController.setRootElement(wrapperEl);
+  });
 </script>
 
-<div class="wrapper">
+<div class="wrapper" bind:this={wrapperEl}>
   <div class="controls">
     <div class="toggle__wrapper">
       <Toggle
         checked={$windowManagerEnabled}
+        disabled={$fancyZonesEnabled}
         on:change={({ detail }) => settingsContoller.setWindowManager(detail)}
         >Window Manager</Toggle
+      >
+    </div>
+    <div class="toggle__wrapper">
+      <Toggle
+        checked={$fancyZonesEnabled}
+        on:change={({ detail }) => settingsContoller.setFancyZones(detail)}
+        >Fancy zones</Toggle
       >
     </div>
     <div class="toggle__wrapper">

@@ -7,6 +7,8 @@ import {
   type Position,
   type WindowInfo,
 } from '$lib/modules/shared/models';
+import { appWindow } from '@tauri-apps/api/window';
+import { delay } from '../helpers';
 
 type GlobalMouseEventCallback = (event: GlobalMouseEvent) => void;
 type BroadcastListener = (event: any) => void;
@@ -69,7 +71,11 @@ export class ChannelService {
   }
 
   async setCurrentWindowFrame(frame: Frame) {
-    invoke('set_current_window_position', { payload: JSON.stringify(frame) });
+    document.body.style.opacity = '0';
+    await delay(300);
+    await invoke('set_current_window_position', { payload: frame });
+    await invoke('set_current_window_position', { payload: frame });
+    document.body.style.opacity = '1';
   }
 
   async getScreens(): Promise<Screen[]> {
@@ -79,10 +85,12 @@ export class ChannelService {
   }
 
   async startWindowManager() {
+    console.log('start wm');
     await invoke('start_window_manager');
   }
 
   async stopWindowManager() {
+    console.log('stop wm');
     await invoke('stop_window_manager');
   }
 

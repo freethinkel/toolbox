@@ -15,6 +15,8 @@ const WINDOW_SIZE = { width: 250, height: 120 };
 export class StatusbarController {
   static readonly instance = new StatusbarController();
 
+  private _rootElement: HTMLElement;
+
   init() {
     appWindow.setSize(new LogicalSize(WINDOW_SIZE.width, WINDOW_SIZE.height));
 
@@ -23,12 +25,16 @@ export class StatusbarController {
       if (isVisible) {
         appWindow.hide();
       } else {
-        this.setWindowFrame({
-          size: WINDOW_SIZE,
+        await this.setWindowFrame({
+          size: {
+            ...WINDOW_SIZE,
+            height: this.getComputedHeight(this._rootElement),
+          },
           position,
         });
         appWindow.show();
         appWindow.setFocus();
+        window.focus();
       }
     });
 
@@ -48,22 +54,20 @@ export class StatusbarController {
 
     ConfigController.instance.config.subscribe((config) => {
       ChannelService.instance.setDebugMode(Boolean(config.debug));
-      console.log(config);
+      if (config.debug) {
+        console.log(config);
+      }
     });
-
-    window.onclose = async () => {
-      await this.onExit();
-    };
 
     window.onkeydown = (event: KeyboardEvent) => {
       if (event.metaKey && event.code === 'keyQ') {
         this.exit();
       }
     };
+  }
 
-    appWindow.onCloseRequested(async () => {
-      await this.onExit();
-    });
+  setRootElement(el: HTMLElement) {
+    this._rootElement = el;
   }
 
   async exit() {
@@ -75,9 +79,24 @@ export class StatusbarController {
     await CaffeinateService.instance.stop();
   }
 
-  private setWindowFrame(frame: Frame) {
-    appWindow.setSize(new LogicalSize(frame.size.width, frame.size.height));
-    appWindow.setPosition(
+  private getComputedHeight(el: HTMLElement) {
+    if (!el) {
+      return WINDOW_SIZE.height;
+    }
+
+    const prevHeight = el.style.height;
+    el.style.height = 'auto';
+    const height = el.scrollHeight;
+    el.style.height = prevHeight;
+
+    return height || WINDOW_SIZE.height;
+  }
+
+  private async setWindowFrame(frame: Frame) {
+    await appWindow.setSize(
+      new LogicalSize(frame.size.width, frame.size.height)
+    );
+    await appWindow.setPosition(
       new PhysicalPosition(frame.position.x, frame.position.y)
     );
   }

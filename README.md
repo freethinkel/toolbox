@@ -7,6 +7,7 @@
 Features
 
 - simple window manager
+- fancy zones
 - caffeinate
 
 Configuration file must be placed at one of the following places (in order):

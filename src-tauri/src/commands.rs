@@ -1,5 +1,5 @@
 use crate::window_manager::{
-    data::{Screen, SetWindowPosition},
+    data::{Frame, Screen, SetWindowPosition},
     WindowManager,
 };
 use cocoa::{
@@ -15,16 +15,12 @@ pub async fn change_window_position(payload: SetWindowPosition) {
     WindowManager::set_window_position(payload);
 }
 #[command]
-pub fn set_current_window_position(window: Window, payload: String) {
+pub fn set_current_window_position(window: Window, payload: Frame) {
     let ns_window = window.ns_window();
-    let rect = serde_json::from_str(payload.as_str());
-    match rect {
-        Ok(rect) => match ns_window {
-            Ok(window) => {
-                WindowManager::set_current_window_position(window as id, rect);
-            }
-            Err(_) => {}
-        },
+    match ns_window {
+        Ok(window) => {
+            WindowManager::set_current_window_position(window as id, payload);
+        }
         Err(_) => {}
     }
 }

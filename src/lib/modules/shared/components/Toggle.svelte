@@ -2,6 +2,7 @@
   import { createEventDispatcher } from 'svelte';
 
   export let checked = false;
+  export let disabled = false;
 
   const dispatch = createEventDispatcher();
   const size = 20;
@@ -13,11 +14,11 @@
   };
 </script>
 
-<label>
+<label class:disabled>
   <div class="content">
     <slot />
   </div>
-  <input type="checkbox" {checked} on:change={onChange} />
+  <input type="checkbox" {checked} on:change={onChange} {disabled} />
   <div class="toggle__wrapper" style:--size={`${size}px`}>
     <div class="toggle__circle" />
   </div>
@@ -34,6 +35,10 @@
     gap: 5px;
     color: var(--color-title);
   }
+  label.disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
   .toggle__wrapper {
     --gap: 0px;
     --width-scale: 1.9;
@@ -45,7 +50,7 @@
     cursor: pointer;
   }
   .toggle__circle {
-    background-color: var(--color-panel);
+    background-color: #fff;
     width: var(--size);
     height: var(--size);
     border-radius: 10em;

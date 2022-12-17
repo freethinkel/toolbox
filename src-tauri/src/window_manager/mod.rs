@@ -8,14 +8,11 @@ use accessibility_sys::{
 use active_win_pos_rs::{get_active_window, ActiveWindow};
 use cocoa::{
     appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSWindow},
-    base::{id, nil, YES},
+    base::{id, nil, NO, YES},
     foundation::{NSArray, NSPoint, NSRect, NSSize},
 };
 use core_foundation::{
-    base::TCFType,
-    boolean::CFBoolean,
-    dictionary::CFDictionary,
-    string::{CFString, CFStringRef},
+    base::TCFType, boolean::CFBoolean, dictionary::CFDictionary, string::CFString,
 };
 use core_graphics::geometry::{CGRect, CGSize};
 use data::{MouseEvent, Point, WindowInfo};
@@ -141,7 +138,7 @@ impl WindowManager {
             y: rect.position.y,
         };
 
-        unsafe { window.setFrame_display_(NSRect { origin, size }, YES) }
+        unsafe { window.setFrame_display_animate_(NSRect { origin, size }, YES, NO) }
     }
 
     pub fn set_window_position(win_data: SetWindowPosition) {

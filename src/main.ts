@@ -14,4 +14,9 @@ const windowLabel = window.getCurrent().label;
 
 ConfigController.instance.config.subscribe((config) => {
   document.body.style.setProperty('--color-accent', config.accentColor);
+  document.oncontextmenu = (event) => {
+    if (!config.debug) {
+      event.preventDefault();
+    }
+  };
 });

@@ -24,49 +24,47 @@ export class WindowManagerController {
   areaCalculator = new AreaCalculator(Config.default);
 
   private screenUpdating = false;
+  private disabled = false;
 
   currentArea = writable<null | SnapArea>(null);
 
   async init() {
-    ChannelService.instance.listenBroadcast((event) => {
-      if (event.type === 'window_manager_enabled') {
-        if (event.enabled) {
-          this.start();
-        } else {
-          this.stop();
-        }
-      }
-    });
     ConfigController.instance.config.subscribe((config) => {
       this.areaCalculator.config = config;
     });
 
     ChannelService.instance.subscribeWindowManager((event) => {
-      this.onUpdateMousePosition(event.mousePoint);
-
-      const handler = {
-        mouse_up: () => {
-          if (ConfigController.instance.isDebugMode) {
-            console.log('on_mouse_up', event, this);
-          }
-          if (this.lastPosition) {
-            this.lastPosition = event;
-            this.onMouseUp();
-          }
-          this.lastPosition = null;
-        },
-        dragging: () => {
-          this.lastPosition = event;
-        },
-        mouse_down: () => {
-          this.lastPosition = null;
-        },
-      }[event.type];
-
-      if (handler) {
-        handler();
+      if (this.disabled) {
+        return;
       }
+      this.onUpdateMousePosition(event.mousePoint);
+      this.windowManagerLoop(event);
     });
+  }
+
+  private windowManagerLoop(event: GlobalMouseEvent) {
+    const handler = {
+      mouse_up: () => {
+        if (ConfigController.instance.isDebugMode) {
+          console.log('on_mouse_up', event, this);
+        }
+        if (this.lastPosition) {
+          this.lastPosition = event;
+          this.onMouseUp();
+        }
+        this.lastPosition = null;
+      },
+      dragging: () => {
+        this.lastPosition = event;
+      },
+      mouse_down: () => {
+        this.lastPosition = null;
+      },
+    }[event.type];
+
+    if (handler) {
+      handler();
+    }
   }
 
   private onUpdateMousePosition(point: Position) {
@@ -141,13 +139,17 @@ export class WindowManagerController {
     this.screenUpdating = false;
   }
 
-  private async stop() {
+  setDisabled(disabled: boolean) {
+    this.disabled = disabled;
+  }
+
+  async stop() {
     await ChannelService.instance.stopWindowManager();
   }
 
-  private start() {
-    this.updateScreen();
-    ChannelService.instance.startWindowManager();
+  async start() {
+    await this.updateScreen();
+    await ChannelService.instance.startWindowManager();
   }
 
   dispose() {}
