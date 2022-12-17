@@ -35,6 +35,7 @@ export class StatusbarController {
         appWindow.show();
         appWindow.setFocus();
         window.focus();
+        document.body.focus();
       }
     });
 
@@ -58,6 +59,10 @@ export class StatusbarController {
         console.log(config);
       }
     });
+
+    window.onclose = () => {
+      this.exit();
+    };
 
     window.onkeydown = (event: KeyboardEvent) => {
       if (event.metaKey && event.code === 'keyQ') {

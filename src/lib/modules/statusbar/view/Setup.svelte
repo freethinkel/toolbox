@@ -59,11 +59,11 @@
 
   .controls {
     flex-grow: 1;
-    padding: 20px 12px;
+    padding: 16px 12px;
   }
 
   .toggle__wrapper + .toggle__wrapper {
-    margin-top: 10px;
+    margin-top: 8px;
   }
 
   .footer {

@@ -105,7 +105,9 @@ export class FancyZonesController {
         x:
           screen.position.x +
           screen.size.width * mode.position.x +
-          this.config.windowPadding,
+          (mode.size.width < 1 && mode.position.x > 0
+            ? this.config.windowGap / 2
+            : this.config.windowPadding),
         y:
           screen.position.y +
           screen.size.height * mode.position.y +
