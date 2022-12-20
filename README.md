@@ -4,6 +4,10 @@
 
 <h1 align="center"><b>Toolbox for MacOS</b></h1>
 
+Demo:
+![window-manager](./screenshots/window-manager.png)
+![fancy-zones](./screenshots/fancy-zones.png)
+
 Features
 
 - simple window manager
