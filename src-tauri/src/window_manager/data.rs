@@ -1,12 +1,12 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Point {
     pub x: f64,
     pub y: f64,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Size {
     pub width: f64,
     pub height: f64,
@@ -34,19 +34,19 @@ pub struct SetWindowPosition {
     pub position: Point,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Frame {
     pub size: Size,
     pub position: Point,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct CocoaScreen {
     pub visible_frame: Frame,
     pub frame: Frame,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 pub struct Screen {
     pub visible_frame: Frame,
     pub frame: Frame,

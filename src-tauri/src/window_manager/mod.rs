@@ -7,7 +7,7 @@ use accessibility_sys::{
 };
 use active_win_pos_rs::{get_active_window, ActiveWindow};
 use cocoa::{
-    appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSWindow, NSEvent},
+    appkit::{CGPoint, NSEvent, NSEventMask, NSEventType, NSScreen, NSWindow},
     base::{id, nil, NO, YES},
     foundation::{NSArray, NSPoint, NSRect, NSSize},
 };
@@ -69,30 +69,88 @@ impl WindowManager {
         }
     }
 
-    pub fn get_current_screen() -> Option<NSRect> {
+    pub fn get_current_screen() -> Option<Screen> {
         unsafe {
             let location: NSPoint = NSEvent::mouseLocation(nil);
             let screens = NSScreen::screens(nil);
             let mut current_frame = None;
             (0..screens.count()).for_each(|i| {
                 let frame = NSScreen::frame(screens.objectAtIndex(i));
-                let is_current = event::NSMouseInRect(location,frame, NO) == YES;
+                let visible_frame = NSScreen::visibleFrame(screens.objectAtIndex(i));
+                let is_current = event::NSMouseInRect(location, frame, NO) == YES;
 
                 if is_current {
-                    current_frame = Some(frame)
+                    current_frame = Some(Screen {
+                        visible_frame: Frame::from(Frame {
+                            size: Size {
+                                width: visible_frame.size.width,
+                                height: visible_frame.size.height,
+                            },
+                            position: Point {
+                                x: visible_frame.origin.x,
+                                y: visible_frame.origin.y,
+                            },
+                        }),
+                        frame: Frame {
+                            size: Size {
+                                width: frame.size.width,
+                                height: frame.size.height,
+                            },
+                            position: Point {
+                                x: frame.origin.x,
+                                y: frame.origin.y,
+                            },
+                        },
+                        cocoa: CocoaScreen {
+                            visible_frame: Frame {
+                                size: Size {
+                                    width: visible_frame.size.width,
+                                    height: visible_frame.size.height,
+                                },
+                                position: Point {
+                                    x: visible_frame.origin.x,
+                                    y: visible_frame.origin.y,
+                                },
+                            },
+                            frame: Frame {
+                                size: Size {
+                                    width: frame.size.width,
+                                    height: frame.size.height,
+                                },
+                                position: Point {
+                                    x: frame.origin.x,
+                                    y: frame.origin.y,
+                                },
+                            },
+                        },
+                    });
                 }
             });
 
-            return current_frame
+            return current_frame;
         }
     }
 
-    pub fn is_same_screen(a: NSRect, b: NSRect) -> bool {
-        if a.origin.x == b.origin.x && a.origin.y == b.origin.y && a.size.width == b.size.width && a.size.height == b.size.height {
-            return true
+    pub fn is_same_frame(a: Frame, b: Frame) -> bool {
+        if b.position.x == a.position.x
+            && a.position.y == b.position.y
+            && a.size.width == b.size.width
+            && a.size.height == b.size.height
+        {
+            return true;
         }
 
-        return false
+        return false;
+    }
+
+    pub fn is_same_screen(a: Screen, b: Screen) -> bool {
+        if WindowManager::is_same_frame(a.frame, b.frame)
+            && WindowManager::is_same_frame(a.visible_frame, b.visible_frame)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     pub fn get_screens() -> Vec<Screen> {
@@ -227,17 +285,17 @@ impl WindowManager {
                 let mut last_screen = last_screen.lock().unwrap();
 
                 if screen.is_some() && last_screen.is_some() {
-                    let screen = screen.unwrap() ;
-                    if !WindowManager::is_same_screen(screen, last_screen.unwrap()) {
+                    let screen = screen.unwrap();
+                    if !WindowManager::is_same_screen(
+                        screen.clone(),
+                        last_screen.as_mut().unwrap().clone(),
+                    ) {
                         match app.lock() {
-                            Ok(app) => {
-                                if let Ok(_) = app.emit_all("update_screen", "") {}
-                            }
+                            Ok(app) => if let Ok(_) = app.emit_all("update_screen", "") {},
                             Err(_) => {}
                         }
-
                     }
-                    *last_screen = Some(screen);
+                    *last_screen = Some(screen.clone());
                 }
 
                 match event_type {
