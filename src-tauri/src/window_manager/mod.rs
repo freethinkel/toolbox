@@ -76,7 +76,7 @@ impl WindowManager {
             let mut current_frame = None;
             (0..screens.count()).for_each(|i| {
                 let frame = NSScreen::frame(screens.objectAtIndex(i));
-                let is_current = event::NSMouseInRect(location,frame, NO);
+                let is_current = event::NSMouseInRect(location,frame, NO) == YES;
 
                 if is_current {
                     current_frame = Some(frame)
