@@ -7,12 +7,12 @@ import {
   type Position,
   type WindowInfo,
 } from '$lib/modules/shared/models';
-import { appWindow } from '@tauri-apps/api/window';
 import { delay } from '../helpers';
 
 type GlobalMouseEventCallback = (event: GlobalMouseEvent) => void;
 type BroadcastListener = (event: any) => void;
 type StatusbarClickListener = (event: Position) => void;
+type SomeListener = () => void;
 
 export class ChannelService {
   static instance = new ChannelService();
@@ -20,11 +20,22 @@ export class ChannelService {
   private _windowManagerListeners: GlobalMouseEventCallback[] = [];
   private _broadcastListeners: BroadcastListener[] = [];
   private _statusbarClickListeners: StatusbarClickListener[] = [];
+  private _updateScreenListeners: SomeListener[] = [];
 
   private _unlisteners: UnlistenFn[] = [];
 
   constructor() {
     this.init();
+  }
+
+  listenUpdateScreen(cb: SomeListener) {
+    this._updateScreenListeners.push(cb);
+
+    return () => {
+      this._updateScreenListeners = this._updateScreenListeners.filter(
+        (listener) => listener !== cb
+      );
+    };
   }
 
   listenBroadcast(cb: BroadcastListener) {
@@ -110,6 +121,11 @@ export class ChannelService {
           cb(GlobalMouseEvent.fromMap(payload));
         }
       })
+    );
+    this._unlisteners.push(
+      await listen('update_screen', () =>
+        this._updateScreenListeners.forEach((cb) => cb())
+      )
     );
     this._unlisteners.push(
       await listen('on_statusbar_click', (event) => {

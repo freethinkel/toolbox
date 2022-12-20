@@ -1,5 +1,4 @@
 import { ConfigController } from '$lib/modules/shared/controllers';
-import { delay } from '$lib/modules/shared/helpers';
 import {
   Config,
   type Frame,
@@ -8,7 +7,6 @@ import {
   type Screen,
 } from '$lib/modules/shared/models';
 import { ChannelService } from '$lib/modules/shared/services';
-import { appWindow } from '@tauri-apps/api/window';
 import { get, writable } from 'svelte/store';
 
 const MODES: Frame[][] = [
@@ -44,7 +42,6 @@ const MODES: Frame[][] = [
 export class FancyZonesController {
   static readonly instance = new FancyZonesController();
 
-  private screenUpdating = false;
   private enabled = false;
   private selectedFrame: Frame = null;
   private config = Config.default;
@@ -60,8 +57,11 @@ export class FancyZonesController {
       if (!this.enabled) {
         return;
       }
-      this.onUpdateMousePosition(event.mousePoint);
       this.fancyZonesLoop(event);
+    });
+
+    ChannelService.instance.listenUpdateScreen(() => {
+      this.updateScreen();
     });
 
     ConfigController.instance.config.subscribe((config) => {
@@ -161,21 +161,6 @@ export class FancyZonesController {
     });
   }
 
-  private onUpdateMousePosition(point: Position) {
-    if (this.screenUpdating || !this.currentScreen) {
-      return;
-    }
-
-    const isMouseOut = this.isMouseOutScreen(
-      this.currentScreen.normalized.frame,
-      point
-    );
-
-    if (isMouseOut) {
-      this.updateScreen(point);
-    }
-  }
-
   private isMouseOutScreen(screen: Frame, mouse: Position): boolean {
     if (!screen) {
       return false;
@@ -192,8 +177,6 @@ export class FancyZonesController {
   }
 
   private async updateScreen(mouse?: Position) {
-    this.screenUpdating = true;
-
     const screens = await ChannelService.instance.getScreens();
     const screen = mouse
       ? screens.find(
@@ -208,7 +191,5 @@ export class FancyZonesController {
         screen.original.visibleFrame
       );
     }
-
-    this.screenUpdating = false;
   }
 }

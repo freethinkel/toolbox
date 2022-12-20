@@ -7,7 +7,7 @@ use accessibility_sys::{
 };
 use active_win_pos_rs::{get_active_window, ActiveWindow};
 use cocoa::{
-    appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSWindow},
+    appkit::{CGPoint, NSEventMask, NSEventType, NSScreen, NSWindow, NSEvent},
     base::{id, nil, NO, YES},
     foundation::{NSArray, NSPoint, NSRect, NSSize},
 };
@@ -69,6 +69,32 @@ impl WindowManager {
         }
     }
 
+    pub fn get_current_screen() -> Option<NSRect> {
+        unsafe {
+            let location: NSPoint = NSEvent::mouseLocation(nil);
+            let screens = NSScreen::screens(nil);
+            let mut current_frame = None;
+            (0..screens.count()).for_each(|i| {
+                let frame = NSScreen::frame(screens.objectAtIndex(i));
+                let is_current = event::NSMouseInRect(location,frame, NO);
+
+                if is_current {
+                    current_frame = Some(frame)
+                }
+            });
+
+            return current_frame
+        }
+    }
+
+    pub fn is_same_screen(a: NSRect, b: NSRect) -> bool {
+        if a.origin.x == b.origin.x && a.origin.y == b.origin.y && a.size.width == b.size.width && a.size.height == b.size.height {
+            return true
+        }
+
+        return false
+    }
+
     pub fn get_screens() -> Vec<Screen> {
         unsafe {
             let screens = NSScreen::screens(nil);
@@ -124,6 +150,7 @@ impl WindowManager {
                     },
                 });
             });
+
             frames
         }
     }
@@ -176,6 +203,7 @@ impl WindowManager {
     pub fn start(&self) -> WindowManager {
         let last_win: Mutex<Option<ActiveWindow>> = Mutex::new(None.into());
         let app = Mutex::new(self.app.clone());
+        let last_screen = Mutex::new(WindowManager::get_current_screen());
 
         match &self.monitor {
             Some(monitor) => {
@@ -195,36 +223,49 @@ impl WindowManager {
                     y: location.y,
                 };
                 let event_type = EventMonitor::event_type(event);
+                let screen = WindowManager::get_current_screen();
+                let mut last_screen = last_screen.lock().unwrap();
+
+                if screen.is_some() && last_screen.is_some() {
+                    let screen = screen.unwrap() ;
+                    if !WindowManager::is_same_screen(screen, last_screen.unwrap()) {
+                        match app.lock() {
+                            Ok(app) => {
+                                if let Ok(_) = app.emit_all("update_screen", "") {}
+                            }
+                            Err(_) => {}
+                        }
+
+                    }
+                    *last_screen = Some(screen);
+                }
 
                 match event_type {
                     NSEventType::NSLeftMouseDown => {
                         let mut inner = last_win.lock().unwrap();
                         let active_window = get_active_window();
-                        match active_window {
-                            Ok(active_window) => {
-                                *inner = Some(get_active_window().unwrap());
-                                let payload = &MouseEvent {
-                                    point: location,
-                                    event_type: "mouse_down".to_string(),
-                                    window_info: Some(WindowInfo {
-                                        id: active_window.window_id,
-                                        pid: active_window.process_id,
-                                        point: {
-                                            Point {
-                                                x: active_window.position.x,
-                                                y: active_window.position.y,
-                                            }
-                                        },
-                                    }),
-                                };
-                                match app.lock() {
-                                    Ok(app) => {
-                                        if let Ok(_) = app.emit_all("window_manager", payload) {}
-                                    }
-                                    Err(_) => {}
+                        if let Ok(active_window) = active_window {
+                            *inner = Some(get_active_window().unwrap());
+                            let payload = &MouseEvent {
+                                point: location,
+                                event_type: "mouse_down".to_string(),
+                                window_info: Some(WindowInfo {
+                                    id: active_window.window_id,
+                                    pid: active_window.process_id,
+                                    point: {
+                                        Point {
+                                            x: active_window.position.x,
+                                            y: active_window.position.y,
+                                        }
+                                    },
+                                }),
+                            };
+                            match app.lock() {
+                                Ok(app) => {
+                                    if let Ok(_) = app.emit_all("window_manager", payload) {}
                                 }
+                                Err(_) => {}
                             }
-                            Err(_) => {}
                         }
                     }
                     NSEventType::NSLeftMouseUp => {

@@ -23,7 +23,6 @@ export class WindowManagerController {
 
   areaCalculator = new AreaCalculator(Config.default);
 
-  private screenUpdating = false;
   private disabled = false;
 
   currentArea = writable<null | SnapArea>(null);
@@ -33,11 +32,14 @@ export class WindowManagerController {
       this.areaCalculator.config = config;
     });
 
+    ChannelService.instance.listenUpdateScreen(() => {
+      this.updateScreen();
+    });
+
     ChannelService.instance.subscribeWindowManager((event) => {
       if (this.disabled) {
         return;
       }
-      this.onUpdateMousePosition(event.mousePoint);
       this.windowManagerLoop(event);
     });
   }
@@ -64,21 +66,6 @@ export class WindowManagerController {
 
     if (handler) {
       handler();
-    }
-  }
-
-  private onUpdateMousePosition(point: Position) {
-    if (this.screenUpdating || !this.areaCalculator.currentScreen) {
-      return;
-    }
-
-    const isMouseOut = this.isMouseOutScreen(
-      this.areaCalculator.currentScreen.original.frame,
-      point
-    );
-
-    if (isMouseOut) {
-      this.updateScreen(point);
     }
   }
 
@@ -119,8 +106,6 @@ export class WindowManagerController {
   }
 
   private async updateScreen(mouse?: Position) {
-    this.screenUpdating = true;
-
     const screens = await ChannelService.instance.getScreens();
     const screen = mouse
       ? screens.find(
@@ -135,8 +120,6 @@ export class WindowManagerController {
         screen.original.visibleFrame
       );
     }
-
-    this.screenUpdating = false;
   }
 
   setDisabled(disabled: boolean) {

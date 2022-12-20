@@ -1,7 +1,7 @@
 use block::{ConcreteBlock, RcBlock};
 use cocoa::{
     appkit::{CGPoint, NSEvent, NSEventMask, NSEventType},
-    base::id,
+    base::{id, BOOL}, foundation::{NSPoint, NSRect},
 };
 use objc::{class, msg_send, sel, sel_impl};
 
@@ -55,4 +55,8 @@ impl EventMonitor {
 #[link(name = "ApplicationServices", kind = "framework")]
 extern "C" {
     fn CGEventGetLocation(event: CGEventRef) -> CGPoint;
+}
+
+extern "C" {
+    pub fn NSMouseInRect(aPoint: NSPoint, aRect: NSRect, flipped: BOOL) -> BOOL;
 }
