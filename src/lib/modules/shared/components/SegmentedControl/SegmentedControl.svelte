@@ -1,0 +1,90 @@
+<script lang="ts">
+	import { createEventDispatcher, setContext } from 'svelte';
+	import { spring } from 'svelte/motion';
+	import { onMount } from 'svelte';
+	import { CONTEXT_KEY, type SegmentedControlContext } from './context';
+
+	export let value: string;
+
+	let slotsEl: HTMLElement;
+	const dispatch = createEventDispatcher();
+
+	const size = spring({ height: 0, width: 0 });
+	const leftOffset = spring(0);
+	const scale = spring(1);
+
+	const computeHighlight = (element: HTMLElement) => {
+		size.set({
+			width: element.clientWidth,
+			height: element.clientHeight,
+		});
+		leftOffset.set(element.offsetLeft);
+	};
+
+	const onControlTapDown = () => {
+		scale.set(0.9);
+	};
+	const onControlTapUp = () => {
+		scale.set(1);
+	};
+	const onChange = (value: string) => {
+		dispatch('change', value);
+	};
+
+	setContext(CONTEXT_KEY, {
+		onChange,
+		onControlTapDown,
+		onControlTapUp,
+	} satisfies SegmentedControlContext);
+
+	$: {
+		if (!value) {
+			throw new Error('value is not set');
+		}
+		if (slotsEl) {
+			const children = Array.from(slotsEl.children);
+			const currentActive = children.find(
+				(node) => node.getAttribute('data-value') === value
+			) as HTMLElement | undefined;
+
+			if (currentActive) {
+				computeHighlight(currentActive);
+			}
+		}
+	}
+</script>
+
+<div class="wrapper">
+	<div
+		class="highlight"
+		style:transform={`translateX(${$leftOffset}px) scale(${$scale})`}
+		style:width={`${$size.width}px`}
+		style:height={`${$size.height}px`}
+	/>
+	<div class="slots" bind:this={slotsEl}>
+		<slot />
+	</div>
+</div>
+
+<style lang="postcss">
+	.wrapper {
+		position: relative;
+	}
+
+	.slots {
+		background-color: var(--color-panel);
+		border-radius: var(--border-radius);
+		display: flex;
+		padding: 3px;
+	}
+
+	.highlight {
+		position: absolute;
+		top: 3px;
+		left: 0;
+		width: 100px;
+		height: 100%;
+		background-color: var(--color-border);
+		border-radius: var(--border-radius);
+	}
+</style>
