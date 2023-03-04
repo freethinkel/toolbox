@@ -114,11 +114,21 @@ export class NSEvent {
 		for (var m of masks) {
 			mask = mask | _maskToValue(m)!;
 		}
+		let prevEvent: NSEvent = null;
 		window.getCurrent().listen('nsevent_on_event', ({ payload }) => {
-			handler({
+			let event: NSEvent = {
 				type: _valueToMask((payload as any).event_type),
 				position: (payload as any).point,
-			});
+			};
+			const isSameEvent =
+				event.type === prevEvent?.type &&
+				event.position.x === prevEvent?.position.x &&
+				event.position.y === prevEvent?.position.y;
+
+			if (!isSameEvent) {
+				handler(event);
+			}
+			prevEvent = event;
 		});
 		await invoke('nsevent_add_global_monitor_for_events', { mask: mask });
 	}

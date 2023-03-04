@@ -28,7 +28,7 @@
 	button {
 		position: relative;
 		z-index: 100;
-		min-height: 28px;
+		min-height: 24px;
 		flex-grow: 1;
 		appearance: none;
 		margin: 0;

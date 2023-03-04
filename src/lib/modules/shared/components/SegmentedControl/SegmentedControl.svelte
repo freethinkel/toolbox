@@ -3,15 +3,16 @@
 	import { spring } from 'svelte/motion';
 	import { onMount } from 'svelte';
 	import { CONTEXT_KEY, type SegmentedControlContext } from './context';
+	import { writable } from 'svelte/store';
 
 	export let value: string;
 
 	let slotsEl: HTMLElement;
 	const dispatch = createEventDispatcher();
 
-	const size = spring({ height: 0, width: 0 });
-	const leftOffset = spring(0);
-	const scale = spring(1);
+	const size = writable({ height: 0, width: 0 });
+	const leftOffset = writable(0);
+	const scale = writable(1);
 
 	const computeHighlight = (element: HTMLElement) => {
 		size.set({
@@ -27,8 +28,10 @@
 	const onControlTapUp = () => {
 		scale.set(1);
 	};
-	const onChange = (value: string) => {
-		dispatch('change', value);
+	const onChange = (newValue: string) => {
+		if (newValue !== value) {
+			dispatch('change', newValue);
+		}
 	};
 
 	setContext(CONTEXT_KEY, {
@@ -55,12 +58,14 @@
 </script>
 
 <div class="wrapper">
-	<div
-		class="highlight"
-		style:transform={`translateX(${$leftOffset}px) scale(${$scale})`}
-		style:width={`${$size.width}px`}
-		style:height={`${$size.height}px`}
-	/>
+	{#if $size.width > 0}
+		<div
+			class="highlight"
+			style:transform={`translateX(${$leftOffset}px) scale(${$scale})`}
+			style:width={`${$size.width}px`}
+			style:height={`${$size.height}px`}
+		/>
+	{/if}
 	<div class="slots" bind:this={slotsEl}>
 		<slot />
 	</div>
@@ -86,5 +91,6 @@
 		height: 100%;
 		background-color: var(--color-border);
 		border-radius: var(--border-radius);
+		transition: 0.22s cubic-bezier(0.65, 0, 0.35, 1);
 	}
 </style>

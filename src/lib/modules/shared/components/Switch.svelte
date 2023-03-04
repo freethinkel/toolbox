@@ -2,9 +2,15 @@
 	import { createEventDispatcher } from 'svelte';
 
 	export let checked = false;
-
 	const dispatch = createEventDispatcher();
-	const size = 24;
+
+	const onChange = (event: Event) => {
+		const input = event.target as HTMLInputElement;
+		dispatch('change', input.checked);
+		input.checked = checked;
+	};
+
+	const size = 20;
 	$: wrapperSize = size * 1.9;
 </script>
 
@@ -17,7 +23,12 @@
 		<slot />
 	</div>
 
-	<input class="visually-hidden" type="checkbox" />
+	<input
+		{checked}
+		on:change={onChange}
+		class="visually-hidden"
+		type="checkbox"
+	/>
 	<div class="toggle">
 		<div class="toggle__circle" />
 	</div>

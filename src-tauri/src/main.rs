@@ -15,6 +15,7 @@ use playground::playground;
 use tauri::{Manager, SystemTray, SystemTrayEvent};
 
 use crate::commands::{
+    accessibility_element::{accessibility_element_set_frame, accessibility_element_under_cursor},
     nscolor::nscolor_get_accent,
     nsevent::{
         nsevent_add_global_monitor_for_events, nsevent_mouse_location, nsevent_remove_monitor,
@@ -44,6 +45,8 @@ fn main() {
             nsevent_add_global_monitor_for_events,
             nsevent_remove_monitor,
             nscolor_get_accent,
+            accessibility_element_under_cursor,
+            accessibility_element_set_frame
         ])
         .system_tray(tray)
         .on_system_tray_event(|app, event| match event {

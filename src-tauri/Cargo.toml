@@ -16,6 +16,7 @@ tauri-build = { version = "1.2", features = [] }
 serde_json = "1.0"
 serde = { version = "1.0", features = ["derive"] }
 tauri = { version = "1.2", features = ["api-all", "macos-private-api", "system-tray"] }
+active-win-pos-rs = "0.7.1"
 window-vibrancy = "0.3.2"
 
 [target."cfg(target_os = \"macos\")".dependencies]
