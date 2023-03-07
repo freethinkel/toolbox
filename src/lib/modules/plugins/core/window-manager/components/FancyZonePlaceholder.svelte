@@ -27,14 +27,18 @@
 		transition: 0.1s ease-out transform, 0.1s ease-out height,
 			0.1s ease-out width;
 		border-radius: var(--border-radius);
-		border: 2px solid var(--color-accent);
-		&::before {
-			content: '';
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			background-color: var(--color-accent);
-			opacity: 0.12;
+		backdrop-filter: blur(20px);
+		background-color: var(--color-accent12);
+		animation: 10s fixBlur infinite alternate;
+	}
+
+	/* fix rerender blur */
+	@keyframes fixBlur {
+		0% {
+			opacity: 0.99999;
+		}
+		100% {
+			opacity: 1;
 		}
 	}
 </style>

@@ -1,7 +1,5 @@
 <script lang="ts">
 	import { createEventDispatcher, setContext } from 'svelte';
-	import { spring } from 'svelte/motion';
-	import { onMount } from 'svelte';
 	import { CONTEXT_KEY, type SegmentedControlContext } from './context';
 	import { writable } from 'svelte/store';
 
@@ -22,11 +20,16 @@
 		leftOffset.set(element.offsetLeft);
 	};
 
-	const onControlTapDown = () => {
-		scale.set(0.9);
+	const changeScale = (isTapDown: boolean) => scale.set(isTapDown ? 0.9 : 1);
+
+	const onControlTapDown = (newValue: string) => {
+		changeScale(true);
 	};
-	const onControlTapUp = () => {
-		scale.set(1);
+	const onControlTapUp = (newValue: string) => {
+		changeScale(false);
+		if (newValue !== value) {
+			dispatch('change', newValue);
+		}
 	};
 	const onChange = (newValue: string) => {
 		if (newValue !== value) {
@@ -57,6 +60,8 @@
 	}
 </script>
 
+<svelte:body on:mouseup={() => changeScale(false)} />
+
 <div class="wrapper">
 	{#if $size.width > 0}
 		<div
@@ -77,7 +82,7 @@
 	}
 
 	.slots {
-		background-color: var(--color-panel);
+		background-color: var(--color-panel24);
 		border-radius: var(--border-radius);
 		display: flex;
 		padding: 3px;

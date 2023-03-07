@@ -1,3 +1,4 @@
+use cocoa::base::YES;
 use cocoa::{
     appkit::{NSWindow, NSWindowCollectionBehavior},
     base::{id, NO},
@@ -11,11 +12,19 @@ pub fn patch_overlay_window(window: Window) {
 
         let () = msg_send![ns_window, invalidateShadow];
         ns_window.setHasShadow_(NO);
-        // ns_window.setLevel_(50);
-        // ns_window.setIgnoresMouseEvents_(YES);
         ns_window.setCollectionBehavior_(
             NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
                 | NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary,
-        )
+        );
+        let is_debug = false;
+        #[cfg(not(debug_assertions))]
+        {
+            let is_debug = false;
+        }
+
+        if !is_debug {
+            ns_window.setIgnoresMouseEvents_(YES);
+            ns_window.setLevel_(20);
+        }
     }
 }

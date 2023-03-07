@@ -1,89 +1,89 @@
 {
-  "build": {
-    "beforeDevCommand": "pnpm dev",
-    "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
-  },
-  "package": {
-    "productName": "toolbox",
-    "version": "0.0.0"
-  },
-  "tauri": {
-    "macOSPrivateApi": true,
-    "systemTray": {
-      "iconPath": "icons/statusbar-icon.png",
-      "iconAsTemplate": true
-    },
-    "allowlist": {
-      "all": true,
-      "shell": {
-        "all": false,
-        "open": true
-      }
-    },
-    "bundle": {
-      "active": true,
-      "category": "DeveloperTool",
-      "copyright": "",
-      "deb": {
-        "depends": []
-      },
-      "externalBin": [],
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "identifier": "ru.freethinkel.toolbox",
-      "longDescription": "",
-      "macOS": {
-        "entitlements": null,
-        "exceptionDomain": "",
-        "frameworks": [],
-        "providerShortName": null,
-        "signingIdentity": null
-      },
-      "resources": [],
-      "shortDescription": "",
-      "targets": "all",
-      "windows": {
-        "certificateThumbprint": null,
-        "digestAlgorithm": "sha256",
-        "timestampUrl": ""
-      }
-    },
-    "security": {
-      "csp": null
-    },
-    "updater": {
-      "active": false
-    },
-    "windows": [
-      {
-        "fullscreen": false,
-        "height": 600,
-        "resizable": false,
-        "title": "toolbox",
-        "width": 800,
-        "transparent": true,
-        "decorations": false
-      },
-      {
-        "label": "statusbar",
-        "height": 120,
-        "width": 250,
-        "fullscreen": false,
-        "resizable": false,
-        "titleBarStyle": "Transparent",
-        "focus": true,
-        "alwaysOnTop": true,
-        "transparent": true,
-        "visible": false
-      }
-    ]
-  }
+	"build": {
+		"beforeDevCommand": "pnpm dev",
+		"beforeBuildCommand": "pnpm build",
+		"devPath": "http://localhost:1420",
+		"distDir": "../dist",
+		"withGlobalTauri": false
+	},
+	"package": {
+		"productName": "toolbox",
+		"version": "0.0.0"
+	},
+	"tauri": {
+		"macOSPrivateApi": true,
+		"systemTray": {
+			"iconPath": "icons/statusbar-icon.png",
+			"iconAsTemplate": true
+		},
+		"allowlist": {
+			"all": true,
+			"shell": {
+				"all": false,
+				"open": true
+			}
+		},
+		"bundle": {
+			"active": true,
+			"category": "DeveloperTool",
+			"copyright": "",
+			"deb": {
+				"depends": []
+			},
+			"externalBin": [],
+			"icon": [
+				"icons/32x32.png",
+				"icons/128x128.png",
+				"icons/128x128@2x.png",
+				"icons/icon.icns",
+				"icons/icon.ico"
+			],
+			"identifier": "ru.freethinkel.toolbox",
+			"longDescription": "",
+			"macOS": {
+				"entitlements": null,
+				"exceptionDomain": "",
+				"frameworks": [],
+				"providerShortName": null,
+				"signingIdentity": null
+			},
+			"resources": [],
+			"shortDescription": "",
+			"targets": "all",
+			"windows": {
+				"certificateThumbprint": null,
+				"digestAlgorithm": "sha256",
+				"timestampUrl": ""
+			}
+		},
+		"security": {
+			"csp": null
+		},
+		"updater": {
+			"active": false
+		},
+		"windows": [
+			{
+				"fullscreen": false,
+				"height": 600,
+				"resizable": false,
+				"title": "toolbox",
+				"width": 800,
+				"transparent": true,
+				"decorations": false
+			},
+			{
+				"label": "statusbar",
+				"height": 120,
+				"width": 250,
+				"fullscreen": false,
+				"resizable": false,
+				"titleBarStyle": "Transparent",
+				"focus": true,
+				"alwaysOnTop": true,
+				"visible": false,
+				"transparent": true
+			}
+		]
+	}
 }

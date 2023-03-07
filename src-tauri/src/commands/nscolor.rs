@@ -5,6 +5,8 @@ use tauri::command;
 #[command]
 pub fn nscolor_get_accent() -> String {
     unsafe {
-        return NSAColor::accentColor(nil);
+        let color = NSAColor::accent_color(nil);
+
+        return NSAColor::to_rgb(color);
     }
 }

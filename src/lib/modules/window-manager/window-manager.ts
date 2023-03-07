@@ -1,10 +1,11 @@
 import type { NSScreen } from '../cocoa/models/nsscreen';
 import { ScreensStore } from './screens';
 
-import type { Frame, Position } from '../shared/models/frame';
+import { Position, type Frame } from '../shared/models/frame';
 import { NSWindow } from '../cocoa/models/nswindow';
 import {
 	attach,
+	combine,
 	createEffect,
 	createEvent,
 	createStore,
@@ -100,6 +101,19 @@ const $isDragging = createStore(false)
 	.on(onDragStarted, () => true)
 	.on(onDragEnded, () => false);
 const $draggingPosition = createStore<Position | null>(null);
+const $draggingPositionFromScreen = combine([
+	$currentCGScreen,
+	$draggingPosition,
+]).map(([screen, offset]) => {
+	if (offset != null) {
+		var offsetPosition = screen?.frame.position;
+		return new Position(
+			offset.x - offsetPosition.x,
+			offset.y - offsetPosition.y
+		);
+	}
+	return null;
+});
 
 const setWindowFrameFx = attach({
 	effect: setAccessibilityElementFrameFx,
@@ -176,6 +190,8 @@ export const WindowManagerStore = {
 	$currentCGScreen,
 	$currentWindow,
 	$draggingPosition,
+	$draggingPositionFromScreen,
+	$isDragging,
 	onDragEnded,
 	onDragStarted,
 	setWindowFrameFx,

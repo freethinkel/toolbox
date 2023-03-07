@@ -2,7 +2,7 @@ import type { NSScreen } from '@/modules/cocoa/models/nsscreen';
 import { Frame } from '@/modules/shared/models/frame';
 import { Alignment } from '@/modules/shared/models/geometry';
 import { WindowManagerStore } from '@/modules/window-manager';
-import { createStore, sample } from 'effector';
+import { combine, createStore, sample } from 'effector';
 import { ActiveSnapSide } from '../models/active-snap-side';
 
 const _snapSides = [
@@ -83,6 +83,7 @@ const computeAreaFromScreen = ({
 };
 
 const $gap = createStore(10);
+const $enabled = createStore(false);
 const $sensitive = createStore(100);
 export const $placeholder = createStore<Frame>(null);
 
@@ -135,7 +136,9 @@ sample({
 
 sample({
 	clock: WindowManagerStore.onDragEnded,
-	filter: $placeholder.map(Boolean),
+	filter: combine($enabled, $placeholder.map(Boolean)).map(
+		([enabled, placeholder]) => enabled && placeholder
+	),
 	source: $placeholder,
 	fn: (source, _) => source,
 	target: WindowManagerStore.setWindowFrameFx,

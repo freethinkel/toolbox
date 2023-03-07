@@ -5,4 +5,8 @@ export class NSWindow {
 	static async setFrame(frame: Frame): Promise<void> {
 		await invoke('nswindow_set_frame', { frame });
 	}
+
+	static async setDecorations(label: string) {
+		invoke('nswindow_set_decorations', { label });
+	}
 }
