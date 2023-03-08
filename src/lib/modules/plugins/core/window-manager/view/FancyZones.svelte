@@ -14,12 +14,6 @@
 	const placeholder = FancyZonesStore.$placeholder;
 </script>
 
-<div
-	style="position: fixed; top: 100px; left: 50%; color: white; font-size: 30px"
->
-	{$isDragging} ||{$isDraggingTop}
-</div>
-
 <FancyZonePlaceholder frame={$placeholder} />
 
 <div
