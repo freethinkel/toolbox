@@ -16,7 +16,7 @@ pub fn patch_overlay_window(window: Window) {
             NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
                 | NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary,
         );
-        let is_debug = false;
+        let is_debug = true;
         #[cfg(not(debug_assertions))]
         {
             let is_debug = false;

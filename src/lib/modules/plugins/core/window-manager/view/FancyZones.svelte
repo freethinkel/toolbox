@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Frame, type Size } from '@/modules/shared/models/frame';
+	import { Frame } from '@/modules/shared/models/frame';
 	import { WindowManagerStore } from '@/modules/window-manager';
 	import FancyZonePlaceholder from '../components/FancyZonePlaceholder.svelte';
 	import FancyZoneRect from '../components/FancyZoneRect.svelte';
@@ -13,6 +13,12 @@
 	const groupSize = FancyZonesStore.SETTINGS.groupSize;
 	const placeholder = FancyZonesStore.$placeholder;
 </script>
+
+<div
+	style="position: fixed; top: 100px; left: 50%; color: white; font-size: 30px"
+>
+	{$isDragging} ||{$isDraggingTop}
+</div>
 
 <FancyZonePlaceholder frame={$placeholder} />
 

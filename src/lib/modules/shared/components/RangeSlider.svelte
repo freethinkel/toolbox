@@ -9,7 +9,7 @@
 	const size = 20;
 
 	$: {
-		value = offsetLeft * 100;
+		offsetLeft = value;
 	}
 
 	const dispatch = createEventDispatcher();
@@ -27,6 +27,7 @@
 			(wrapperRect.width - size);
 
 		offsetLeft = Math.round(value * (100 / step)) / (100 / step);
+		dispatch('change', offsetLeft);
 	};
 	const listenDragging = () => {
 		const onMouseUp = () => {

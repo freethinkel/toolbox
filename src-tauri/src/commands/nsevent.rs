@@ -28,6 +28,7 @@ pub fn nsevent_remove_monitor() {
             Some(monitor) => monitor.stop(),
             _ => (),
         }
+        MONITOR_GLOBAL = None;
     }
 }
 

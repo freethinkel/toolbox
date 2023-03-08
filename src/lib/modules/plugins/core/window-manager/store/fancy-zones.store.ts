@@ -1,6 +1,8 @@
+import { SettingsStore } from '@/modules/settings/store/settings.store';
 import { Frame, Position, Size } from '@/modules/shared/models/frame';
 import { WindowManagerStore } from '@/modules/window-manager';
 import { combine, createStore, sample } from 'effector';
+import { WindowManagerStatusbarStore } from './statusbar.store';
 
 const defaultZones = [
 	[new Frame({ width: 1, height: 1 }, { x: 0, y: 0 })],
@@ -35,13 +37,19 @@ const SETTINGS = {
 	groupGap: 7.0,
 };
 
-const $enabled = createStore(true);
+const $enabled = combine(
+	[
+		WindowManagerStatusbarStore.$enabled.$store,
+		WindowManagerStatusbarStore.$mode.$store,
+	],
+	([enabled, mode]) => enabled && mode === 'fancy_zones'
+);
 const $placeholder = createStore<Frame>(null);
 const $zones = createStore([...defaultZones]);
 const $activeZone = createStore<Frame>(null);
 const $activeTop = createStore(0);
 const $isDraggingTop = createStore(false);
-const $gap = createStore(10);
+const $gap = SettingsStore.windowGap.$store;
 
 sample({
 	clock: WindowManagerStore.$currentCGScreen,
@@ -124,11 +132,11 @@ sample({
 
 		if (frame && screenFrame) {
 			const pseudoScreenFrame = new Frame(
-				new Size(screenFrame.size.width, screenFrame.size.height),
-				new Position(
-					screenFrame.position.x - gap * 2,
-					screenFrame.position.y - gap * 2
-				)
+				new Size(
+					screenFrame.size.width - gap * 2,
+					screenFrame.size.height - gap * 2
+				),
+				new Position(screenFrame.position.x - gap, screenFrame.position.y - gap)
 			);
 			const frameFromScreen = new Frame(
 				new Size(
@@ -136,8 +144,12 @@ sample({
 					pseudoScreenFrame.size.height * frame.size.height - gap * 2
 				),
 				new Position(
-					relativeLeft + frame.position.x * pseudoScreenFrame.size.width + gap,
-					relativeTop + frame.position.y * pseudoScreenFrame.size.height + gap
+					relativeLeft +
+						frame.position.x * pseudoScreenFrame.size.width +
+						gap * 2,
+					relativeTop +
+						frame.position.y * pseudoScreenFrame.size.height +
+						gap * 2
 				)
 			);
 			return frameFromScreen || null;

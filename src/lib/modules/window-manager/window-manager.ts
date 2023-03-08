@@ -47,6 +47,7 @@ const startWindowManagerListenFx = createEffect(() => {
 		}
 	);
 });
+
 const stopWindowManagerListenFx = createEffect(async () => {
 	await NSEvent.removeMonitor();
 });

@@ -2,6 +2,11 @@
 	import Button from '@/modules/shared/components/Button.svelte';
 	import FormGroup from '@/modules/shared/components/FormGroup.svelte';
 	import RangeSlider from '@/modules/shared/components/RangeSlider.svelte';
+	import { SettingsStore } from '../store/settings.store';
+
+	const windowGap = SettingsStore.windowGap.$store;
+
+	$: console.log($windowGap);
 </script>
 
 <div class="settings">
@@ -10,11 +15,16 @@
 		<h1>Settings</h1>
 		<FormGroup>
 			<span slot="label">Window gap</span>
-			<RangeSlider step={10} />
+			<RangeSlider
+				on:change={({ detail }) =>
+					SettingsStore.windowGap.setValue(detail * 100)}
+				step={10}
+				value={$windowGap / 100}
+			/>
+			<div slot="hint">
+				<span>{$windowGap}</span>
+			</div>
 		</FormGroup>
-		<div class="footer">
-			<Button kind="primary">Save</Button>
-		</div>
 	</div>
 </div>
 
