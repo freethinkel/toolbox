@@ -1,7 +1,7 @@
-use block::{ConcreteBlock, RcBlock};
+use block::ConcreteBlock;
 use cocoa::{
     appkit::{CGPoint, NSEvent, NSEventMask, NSEventType},
-    base::{id, nil, BOOL},
+    base::{id, BOOL},
     foundation::{NSPoint, NSRect},
 };
 use objc::{class, msg_send, sel, sel_impl};

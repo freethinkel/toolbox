@@ -11,6 +11,7 @@ mod playground;
 
 use data::frame::Point;
 use patch_window::{overlay::patch_overlay_window, statusbar::patch_statusbar_window};
+#[cfg(debug_assertions)]
 use playground::playground;
 use tauri::{ActivationPolicy, Manager, SystemTray, SystemTrayEvent};
 
@@ -26,6 +27,7 @@ use crate::commands::{
 
 fn main() {
     let tray = SystemTray::new();
+    #[cfg(debug_assertions)]
     playground();
 
     tauri::Builder::default()

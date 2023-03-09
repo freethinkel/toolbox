@@ -10,10 +10,9 @@
 	$: components = (($plugins ?? []) as TBPlugin[]).map((plugin) =>
 		plugin.renderStatusbar()
 	);
-	$: console.log(components);
 </script>
 
-<div class="wrapper">
+<div class="wrapper statusbar__frame">
 	<div class="plugins">
 		{#each components as component}
 			<svelte:component this={component} />
@@ -36,13 +35,14 @@
 
 <style>
 	.wrapper {
-		height: 100%;
 		min-height: inherit;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
 	}
 	.plugins {
 		padding: 8px;
+		min-height: 100px;
 	}
 </style>

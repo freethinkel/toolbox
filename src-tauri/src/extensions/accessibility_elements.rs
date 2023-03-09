@@ -5,11 +5,7 @@ use accessibility_sys::{
     kAXValueTypeCGSize, kAXWindowsAttribute, AXError, AXUIElementCopyAttributeValue,
     AXUIElementCreateApplication, AXUIElementRef, AXUIElementSetAttributeValue, AXValueCreate,
 };
-use cocoa::{
-    appkit::{CGPoint, NSColor},
-    base::id,
-    foundation::NSArray,
-};
+use cocoa::{appkit::CGPoint, base::id, foundation::NSArray};
 use core_foundation::{
     base::{CFTypeRef, TCFType},
     string::CFString,

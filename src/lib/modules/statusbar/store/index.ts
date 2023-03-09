@@ -5,6 +5,7 @@ import {
 	appWindow,
 	getAll,
 	PhysicalPosition,
+	PhysicalSize,
 	WebviewWindow,
 } from '@tauri-apps/api/window';
 import { NSWindow } from '@/modules/cocoa/models/nswindow';
@@ -12,6 +13,20 @@ import { wait } from '@/modules/shared/helpers';
 
 const onSystemTrayButtonClick = createEvent<Position>();
 const onSettingsClick = createEvent();
+
+const updateFrameSizeFx = createEffect(async () => {
+	const currentSize = await appWindow.innerSize();
+	const scaleFactor = await appWindow.scaleFactor();
+	const statusbarEl = document.querySelector(
+		'.statusbar__frame'
+	) as HTMLElement;
+	statusbarEl.style.height = 'auto';
+	statusbarEl.style.minHeight = 'auto';
+	const height = (statusbarEl.clientHeight ?? 120) * scaleFactor;
+	statusbarEl.style.height = '100%';
+	statusbarEl.style.minHeight = 'inherit';
+	await appWindow.setSize(new PhysicalSize(currentSize.width, height));
+});
 
 const startStatusbarFx = createEffect(() => {
 	listen('on_statusbar_click', ({ payload }) => {
@@ -25,11 +40,6 @@ const startStatusbarFx = createEffect(() => {
 });
 
 const openSettingsWindowFx = createEffect(async () => {
-	const existWindow = getAll().find((window) => window.label === 'settings');
-	if (existWindow) {
-		await existWindow.setFocus();
-		return;
-	}
 	const settings = new WebviewWindow('settings', {
 		titleBarStyle: 'transparent',
 		title: '',
@@ -37,11 +47,13 @@ const openSettingsWindowFx = createEffect(async () => {
 		resizable: false,
 		fullscreen: false,
 		maximized: false,
+		alwaysOnTop: true,
 		width: 450,
 		height: 300,
 	});
-	// console.log(settings);
 	await wait(100);
+	settings.show();
+	settings.setFocus();
 	await NSWindow.setDecorations(settings.label);
 });
 
@@ -52,6 +64,7 @@ onSystemTrayButtonClick.watch(async (position) => {
 	} else {
 		const newPosition = new PhysicalPosition(position.x, position.y);
 		await appWindow.setPosition(newPosition);
+		await updateFrameSizeFx();
 		appWindow.show();
 		appWindow.setFocus();
 	}

@@ -1,5 +1,3 @@
-use std::sync::{Arc, RwLock};
-
 use cocoa::{appkit::CGFloat, base::id};
 use objc::{class, msg_send, sel, sel_impl};
 
@@ -31,9 +29,5 @@ impl NSAColor for id {
         }
     }
 
-    unsafe fn start_listen(_: Self) {
-        // DistributedNotificationCenter;
-        // Distri
-        // let observer =
-    }
+    unsafe fn start_listen(_: Self) {}
 }

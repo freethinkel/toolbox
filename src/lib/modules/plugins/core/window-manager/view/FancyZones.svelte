@@ -4,6 +4,7 @@
 	import FancyZonePlaceholder from '../components/FancyZonePlaceholder.svelte';
 	import FancyZoneRect from '../components/FancyZoneRect.svelte';
 	import { FancyZonesStore } from '../store/fancy-zones.store';
+	import { WindowManagerSettingsStore } from '../store/settings.store';
 
 	const zones = FancyZonesStore.$zones;
 	const activeZone = FancyZonesStore.$activeZone;
@@ -12,9 +13,14 @@
 	const activeTop = FancyZonesStore.$activeTop;
 	const groupSize = FancyZonesStore.SETTINGS.groupSize;
 	const placeholder = FancyZonesStore.$placeholder;
+
+	const showFancyZonesPlaceholder =
+		WindowManagerSettingsStore.$showFancyZonesPlaceholder.$store;
 </script>
 
-<FancyZonePlaceholder frame={$placeholder} />
+{#if $showFancyZonesPlaceholder}
+	<FancyZonePlaceholder frame={$placeholder} />
+{/if}
 
 <div
 	class="wrapper"
@@ -61,6 +67,8 @@
 		opacity: 0.9;
 		box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.12), 0 4px 4px rgba(0, 0, 0, 0.12);
 		transition: 0.2s ease-out transform;
+		backdrop-filter: blur(10px);
+		animation: 10s fixBlur infinite alternate;
 
 		&.show {
 			transform: translateX(-50%) translateY(-100%);
@@ -68,6 +76,16 @@
 
 		&.active {
 			transform: translateX(-50%) translateY(0);
+		}
+	}
+
+	/* fix rerender blur */
+	@keyframes fixBlur {
+		0% {
+			opacity: 0.99999;
+		}
+		100% {
+			opacity: 1;
 		}
 	}
 

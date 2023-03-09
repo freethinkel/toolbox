@@ -1,3 +1,4 @@
+#[cfg(not(debug_assertions))]
 use cocoa::base::YES;
 use cocoa::{
     appkit::{NSWindow, NSWindowCollectionBehavior},
@@ -16,13 +17,8 @@ pub fn patch_overlay_window(window: Window) {
             NSWindowCollectionBehavior::NSWindowCollectionBehaviorCanJoinAllSpaces
                 | NSWindowCollectionBehavior::NSWindowCollectionBehaviorFullScreenAuxiliary,
         );
-        let is_debug = true;
         #[cfg(not(debug_assertions))]
         {
-            let is_debug = false;
-        }
-
-        if !is_debug {
             ns_window.setIgnoresMouseEvents_(YES);
             ns_window.setLevel_(20);
         }

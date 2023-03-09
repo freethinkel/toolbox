@@ -1,4 +1,4 @@
-use super::frame::{Frame, Point};
+use super::frame::Frame;
 use core_graphics::window::CGWindowID;
 use serde::{Deserialize, Serialize};
 

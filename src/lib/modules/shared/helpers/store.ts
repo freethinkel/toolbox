@@ -1,11 +1,6 @@
 import { emit, listen } from '@tauri-apps/api/event';
 import { appWindow } from '@tauri-apps/api/window';
-import {
-	createEffect,
-	createEvent,
-	createStore,
-	sample,
-} from 'effector-logger';
+import { createEffect, createEvent, createStore, sample } from 'effector';
 
 export const createSharedStore = <T>(
 	name: string,
