@@ -1,7 +1,17 @@
-# Tauri + Svelte + Typescript
+<p align="center">
+   <img width="150" height="150" src="./src-tauri/icons/Square150x150Logo.png" alt="Logo">
+</p>
 
-This template should help get you started developing with Tauri, Svelte and TypeScript in Vite.
+<h1 align="center"><b>Toolbox for MacOS</b></h1>
 
-## Recommended IDE Setup
+Demo:
+![window-manager](./screenshots/window-manager.jpg)
+![fancy-zones](./screenshots/fancy-zones.jpg)
+![statusbar](./screenshots/statusbar.jpg)
+![settings](./screenshots/settings.jpg)
 
-[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode) + [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode) + [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer).
+Features
+
+- simple window manager
+- fancy zones
+- caffeinate
