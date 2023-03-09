@@ -19,8 +19,22 @@
 		"allowlist": {
 			"all": true,
 			"shell": {
-				"all": false,
-				"open": true
+				"all": true,
+				"execute": true,
+				"sidecar": true,
+				"open": true,
+				"scope": [
+					{
+						"name": "killall",
+						"cmd": "killall",
+						"args": true
+					},
+					{
+						"name": "caffeinate",
+						"cmd": "caffeinate",
+						"args": true
+					}
+				]
 			}
 		},
 		"bundle": {

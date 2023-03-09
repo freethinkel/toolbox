@@ -4,12 +4,13 @@
 	import Footer from '../components/Footer.svelte';
 	import Button from '@/modules/shared/components/Button.svelte';
 	import { StatusbarStore } from '../store';
+	import type { SvelteComponent } from 'svelte';
 
 	export let plugins: Store<Array<TBPlugin>>;
 
-	$: components = (($plugins ?? []) as TBPlugin[]).map((plugin) =>
-		plugin.renderStatusbar()
-	);
+	$: components = (($plugins ?? []) as TBPlugin[])
+		.map((plugin) => plugin.renderStatusbar())
+		.filter(Boolean) as typeof SvelteComponent[];
 </script>
 
 <div class="wrapper statusbar__frame">
@@ -43,6 +44,6 @@
 	}
 	.plugins {
 		padding: 8px;
-		min-height: 100px;
+		min-height: 112px;
 	}
 </style>
