@@ -13,6 +13,7 @@ import {
 } from 'effector';
 import { NSEvent, NSEventType } from '../cocoa/models/nsevent';
 import { AccessibilityElement } from '../cocoa/models/accessibility-element';
+import { emit } from '@tauri-apps/api/event';
 
 type MouseEvent<T extends 'down' | 'up' | 'dragged'> = {
 	type: T;
@@ -26,6 +27,7 @@ export const onDragStarted = createEvent('onDragStarted');
 export const onDragEnded = createEvent('onDragEnded');
 
 const startWindowManagerListenFx = createEffect(() => {
+	emit('accessibility_element_check_permission');
 	NSEvent.addGlobalMonitor(
 		[
 			NSEventType.leftMouseDownMask,

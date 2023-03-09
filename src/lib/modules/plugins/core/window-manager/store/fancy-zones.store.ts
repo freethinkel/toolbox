@@ -13,6 +13,11 @@ const defaultZones = [
 	],
 
 	[
+		new Frame({ width: 1, height: 0.5 }, { x: 0, y: 0 }),
+		new Frame({ width: 1, height: 0.5 }, { x: 0, y: 0.5 }),
+	],
+
+	[
 		new Frame({ width: 1 / 6, height: 1 }, { x: 0, y: 0 }),
 		new Frame({ width: 2 / 3, height: 1 }, { x: 1 / 6, y: 0 }),
 		new Frame({ width: 1 / 6, height: 1 }, { x: 1 / 6 + 2 / 3, y: 0 }),
@@ -47,16 +52,12 @@ const $enabled = combine(
 const $placeholder = createStore<Frame>(null);
 const $zones = createStore([...defaultZones]);
 const $activeZone = createStore<Frame>(null);
-const $activeTop = createStore(0);
+const $activeTop = WindowManagerStore.$currentCGScreen.map(
+	(screen) =>
+		(screen?.visibleFrame?.position?.y - screen?.frame?.position?.y || 0) + 15
+);
 const $isDraggingTop = createStore(false);
 const $gap = SettingsStore.windowGap.$store;
-
-sample({
-	clock: WindowManagerStore.$currentCGScreen,
-	filter: $enabled,
-	fn: (screen) => screen.visibleFrame.position.y - screen.frame.position.y + 15,
-	target: $activeTop,
-});
 
 sample({
 	clock: WindowManagerStore.$draggingPositionFromScreen,

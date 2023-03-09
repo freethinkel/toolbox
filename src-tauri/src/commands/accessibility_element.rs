@@ -1,5 +1,11 @@
+use accessibility_sys::{
+    kAXTrustedCheckOptionPrompt, AXIsProcessTrusted, AXIsProcessTrustedWithOptions,
+};
 use active_win_pos_rs::get_active_window;
 use cocoa::appkit::CGPoint;
+use core_foundation::{
+    base::TCFType, boolean::CFBoolean, dictionary::CFDictionary, string::CFString,
+};
 use core_graphics::geometry::CGSize;
 use tauri::command;
 
@@ -56,5 +62,20 @@ pub fn accessibility_element_set_frame(window_info: WindowInfo) {
             );
         }
         Err(_) => {}
+    }
+}
+
+#[command]
+pub fn accessibility_element_check_permission() -> bool {
+    unsafe {
+        let is_trusted = AXIsProcessTrusted();
+        if !is_trusted {
+            let option_prompt = CFString::wrap_under_get_rule(kAXTrustedCheckOptionPrompt);
+            let dict: CFDictionary<CFString, CFBoolean> =
+                CFDictionary::from_CFType_pairs(&[(option_prompt, CFBoolean::true_value())]);
+            AXIsProcessTrustedWithOptions(dict.as_concrete_TypeRef());
+        }
+
+        return is_trusted;
     }
 }
