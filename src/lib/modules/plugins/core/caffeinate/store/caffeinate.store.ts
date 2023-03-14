@@ -1,31 +1,33 @@
-import { createSharedStore } from '@/modules/shared/helpers/store';
-import { createEffect, sample } from 'effector';
-import { Command } from '@tauri-apps/api/shell';
+import { createSharedStore } from "@/modules/shared/helpers/store";
+import { createEffect, sample } from "effector";
+import { Command } from "@tauri-apps/api/shell";
 
 const changeCaffeinateFx = createEffect(async (state: boolean) => {
-	const start = async () => {
-		await stop();
-		const command = new Command('caffeinate', ['-di']);
-		await command.spawn();
-	};
-	const stop = async () => {
-		const command = new Command('killall', ['caffeinate']);
-		await command.spawn();
-	};
+  const start = async () => {
+    await stop();
+    const command = new Command("caffeinate", ["-di"]);
+    await command.spawn();
+  };
 
-	if (state) {
-		await start();
-	} else {
-		await stop();
-	}
+  const stop = async () => {
+    const command = new Command("killall", ["caffeinate"]);
+    await command.spawn();
+  };
+
+  if (state) {
+    await start();
+  } else {
+    await stop();
+  }
 });
-const $enabled = createSharedStore('caffeinate_enabled', 'statusbar', false);
+
+const $enabled = createSharedStore("caffeinate_enabled", "statusbar", false);
 
 sample({
-	clock: $enabled.setValue,
-	target: changeCaffeinateFx,
+  clock: $enabled.setValue,
+  target: changeCaffeinateFx,
 });
 
 export const CaffeinateStore = {
-	$enabled,
+  $enabled,
 };
