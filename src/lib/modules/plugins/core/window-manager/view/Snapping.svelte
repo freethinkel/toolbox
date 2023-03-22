@@ -1,8 +1,8 @@
 <script>
-	import SnapPlaceholder from '../components/SnapPlaceholder.svelte';
-	import { SnappingStore } from '../store/snapping.store';
+  import Placeholder from "../components/Placeholder.svelte";
+  import { SnappingStore } from "../store/snapping.store";
 
-	const frame = SnappingStore.$placeholder;
+  const frame = SnappingStore.$placeholder;
 </script>
 
-<SnapPlaceholder frame={$frame} />
+<Placeholder frame={$frame} />

@@ -13,6 +13,7 @@ import {
 } from "effector";
 import { NSEvent, NSEventType } from "../cocoa/models/nsevent";
 import { AccessibilityElement } from "../cocoa/models/accessibility-element";
+import { debounce, throttle } from "../shared/helpers";
 
 type MouseEvent<T extends "down" | "up" | "dragged"> = {
   type: T;
@@ -26,6 +27,20 @@ export const onDragStarted = createEvent("onDragStarted");
 export const onDragEnded = createEvent("onDragEnded");
 
 const startWindowManagerListenFx = createEffect(async () => {
+  const onGlobalEvent = throttle(100)((event: NSEvent) => {
+    switch (event.type) {
+      case NSEventType.leftMouseDownMask:
+        onMouseDown({ type: "down", position: event.position });
+        break;
+      case NSEventType.leftMouseUpMask:
+        onMouseUp({ type: "up", position: event.position });
+        break;
+      case NSEventType.leftMouseDraggedMask:
+        onMouseDragged({ type: "dragged", position: event.position });
+        break;
+    }
+  });
+
   await AccessibilityElement.checkPermission();
   NSEvent.addGlobalMonitor(
     [
@@ -33,19 +48,7 @@ const startWindowManagerListenFx = createEffect(async () => {
       NSEventType.leftMouseDraggedMask,
       NSEventType.leftMouseUpMask,
     ],
-    (event) => {
-      switch (event.type) {
-        case NSEventType.leftMouseDownMask:
-          onMouseDown({ type: "down", position: event.position });
-          break;
-        case NSEventType.leftMouseUpMask:
-          onMouseUp({ type: "up", position: event.position });
-          break;
-        case NSEventType.leftMouseDraggedMask:
-          onMouseDragged({ type: "dragged", position: event.position });
-          break;
-      }
-    }
+    onGlobalEvent
   );
 });
 

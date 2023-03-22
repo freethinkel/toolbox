@@ -49,7 +49,7 @@ const openSettingsWindowFx = createEffect(async () => {
     maximized: false,
     alwaysOnTop: true,
     width: 450,
-    height: 300,
+    height: 320,
     visible: false,
   });
   await wait(100);

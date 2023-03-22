@@ -8,15 +8,15 @@ import { ThemeStore } from '@/modules/settings/store/theme.store';
 const key = PlatformView.getKey();
 
 const handler = {
-	main: initOverlay,
-	statusbar: initStatusbar,
-	settings: initSettings,
+  main: initOverlay,
+  statusbar: initStatusbar,
+  settings: initSettings,
 }[key];
 
 if (handler) {
-	const el = document.getElementById('root');
+  const el = document.getElementById('root');
 
-	handler(el);
+  handler(el);
 }
 
 ThemeStore.initListenFx();

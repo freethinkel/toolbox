@@ -1,7 +1,7 @@
 <script lang="ts">
   import { Frame } from "@/modules/shared/models/frame";
   import { WindowManagerStore } from "@/modules/window-manager";
-  import FancyZonePlaceholder from "../components/FancyZonePlaceholder.svelte";
+  import Placeholder from "../components/Placeholder.svelte";
   import FancyZoneRect from "../components/FancyZoneRect.svelte";
   import { FancyZonesStore } from "../store/fancy-zones.store";
   import { WindowManagerSettingsStore } from "../store/settings.store";
@@ -19,7 +19,7 @@
 </script>
 
 {#if $showFancyZonesPlaceholder}
-  <FancyZonePlaceholder frame={$placeholder} />
+  <Placeholder frame={$placeholder} />
 {/if}
 
 <div
