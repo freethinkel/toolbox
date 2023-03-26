@@ -28,7 +28,7 @@
 				>
 			</div>
 			<div slot="right">
-				<Button>⌘ Q</Button>
+				<Button on:click={() => StatusbarStore.exitAppFx()}>⌘ Q</Button>
 			</div>
 		</Footer>
 	</div>
