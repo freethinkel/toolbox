@@ -19,11 +19,14 @@
 	--color-accent: rgb(21, 193, 216);
 	--color-accent50: rgba(21, 193, 216, 0.5);
 
-	--color-panel: #fff;
+  --color-panel: rgba(200, 200, 200, 1);
+  --color-panel50: rgba(200, 200, 200, 0.5);
+  --color-panel24: rgba(200, 200, 200, 0.24);
+
 	--color-background: #f5f5f5;
 	--color-text: rgba(0, 0, 0, 0.7);
 	--color-title: rgba(0, 0, 0, 1);
-	--color-border: rgba(0, 0, 0, 0.12);
+	--color-border: rgba(80, 80, 80, 0.12);
 }
 
 @media (prefers-color-scheme: dark) {
