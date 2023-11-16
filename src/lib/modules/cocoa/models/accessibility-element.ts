@@ -21,8 +21,8 @@ export class AccessibilityElement {
       result.frame.size,
       result.frame.position
     );
-    accessibilityElement.windowId = (result as any).window_id;
-    accessibilityElement.pid = (result as any).pid;
+    accessibilityElement.windowId = result.window_id;
+    accessibilityElement.pid = result.pid;
     return accessibilityElement;
   }
 

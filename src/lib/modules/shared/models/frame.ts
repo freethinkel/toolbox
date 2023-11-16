@@ -1,7 +1,10 @@
 import type { Alignment } from "./geometry";
 
 export class Frame {
-  constructor(public readonly size: Size, public readonly position: Position) {}
+  constructor(
+    public readonly size: Size,
+    public readonly position: Position,
+  ) {}
 
   includesPoint(point?: Position): boolean {
     if (!point) {
@@ -42,6 +45,45 @@ export class Frame {
 
   compare(frame: Frame): boolean {
     return this.compareSize(frame.size) && this.comparePosition(frame.position);
+  }
+
+  toJSON(): object {
+    return { size: this.size, position: this.position };
+  }
+
+  static fromMap(data: unknown): Frame {
+    if (typeof data !== "object") {
+      throw new Error(`data must be object but ${typeof data}`);
+    }
+    if (
+      !(
+        "size" in data &&
+        typeof data.size === "object" &&
+        "width" in data.size &&
+        "height" in data.size &&
+        typeof data.size.width === "number" &&
+        typeof data.size.height === "number"
+      )
+    ) {
+      throw new Error(`doesn't have 'size' property`);
+    }
+    if (
+      !(
+        "position" in data &&
+        typeof data.position === "object" &&
+        "x" in data.position &&
+        "y" in data.position &&
+        typeof data.position.x === "number" &&
+        typeof data.position.y === "number"
+      )
+    ) {
+      throw new Error(`doesn't have 'position' property`);
+    }
+
+    return new Frame(
+      new Size(data.size.width, data.size.height),
+      new Position(data.position.x, data.position.y),
+    );
   }
 }
 

@@ -1,30 +1,30 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher } from "svelte";
 
-	export let checked = false;
+  export let checked = false;
 
-	const dispatch = createEventDispatcher();
+  const dispatch = createEventDispatcher();
 
-	const handleChange = (event: Event) => {
-		const input = event.target as HTMLInputElement;
-		dispatch('change', input.checked);
-		input.checked = checked;
-	};
+  const handleChange = (event: Event) => {
+    const input = event.target as HTMLInputElement;
+    dispatch("change", input.checked);
+    input.checked = checked;
+  };
 </script>
 
 <label>
-	<input type="checkbox" {checked} on:change={handleChange} />
+  <input type="checkbox" {checked} on:change={handleChange} />
 
-	<slot />
+  <slot />
 </label>
 
 <style lang="postcss">
-	label {
-		display: flex;
-		align-items: center;
-		cursor: pointer;
-	}
-	input {
-		margin: 0 8px 0px 0px;
-	}
+  label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+  input {
+    margin: 0 8px 0px 0px;
+  }
 </style>

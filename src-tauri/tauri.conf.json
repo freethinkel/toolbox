@@ -8,7 +8,7 @@
   },
   "package": {
     "productName": "Toolbox",
-    "version": "3.0.4"
+    "version": "3.2.0"
   },
   "tauri": {
     "macOSPrivateApi": true,
@@ -18,6 +18,9 @@
     },
     "allowlist": {
       "all": true,
+      "globalShortcut": {
+        "all": true
+      },
       "shell": {
         "all": true,
         "execute": true,

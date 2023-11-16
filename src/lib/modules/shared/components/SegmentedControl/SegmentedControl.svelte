@@ -4,6 +4,7 @@
   import { writable } from "svelte/store";
 
   export let value: string;
+  const valueStore = writable(value);
 
   let slotsEl: HTMLElement;
   const dispatch = createEventDispatcher();
@@ -37,26 +38,33 @@
     }
   };
 
+  $: {
+    valueStore.set(value);
+  }
+
   setContext(CONTEXT_KEY, {
+    value: valueStore,
     onChange,
     onControlTapDown,
     onControlTapUp,
   } satisfies SegmentedControlContext);
 
   $: {
-    if (!value) {
-      throw new Error("value is not set");
-    }
-    if (slotsEl) {
-      const children = Array.from(slotsEl.children);
-      const currentActive = children.find(
-        (node) => node.getAttribute("data-value") === value
-      ) as HTMLElement | undefined;
-
-      if (currentActive) {
-        computeHighlight(currentActive);
+    setTimeout(() => {
+      if (!value) {
+        throw new Error("value is not set");
       }
-    }
+      if (slotsEl) {
+        const children = Array.from(slotsEl.children);
+        const currentActive = children.find(
+          (node) => node.getAttribute("data-value") === value
+        ) as HTMLElement | undefined;
+
+        if (currentActive) {
+          computeHighlight(currentActive);
+        }
+      }
+    });
   }
 </script>
 
@@ -83,7 +91,7 @@
 
   .slots {
     background-color: var(--color-panel24);
-    border-radius: var(--border-radius);
+    border-radius: calc(var(--border-radius) + 3px);
     display: flex;
     padding: 3px;
   }

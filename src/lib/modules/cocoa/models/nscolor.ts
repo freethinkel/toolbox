@@ -1,11 +1,11 @@
-import { invoke } from '@tauri-apps/api';
+import { invoke } from "@tauri-apps/api";
 
 export class NSColor {
-	color: string;
+  color: string;
 
-	static async getAccentColor(): Promise<NSColor> {
-		const payload = await invoke('nscolor_get_accent');
+  static async getAccentColor(): Promise<NSColor> {
+    const payload = await invoke("nscolor_get_accent");
 
-		return { color: String(payload) };
-	}
+    return { color: String(payload) };
+  }
 }

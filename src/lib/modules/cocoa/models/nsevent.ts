@@ -109,13 +109,17 @@ export class NSEvent {
   static async addGlobalMonitor(
     masks: NSEventType[],
     handler: (event: NSEvent) => void
-  ) {
+  ): Promise<string> {
     let mask = 0;
+    let monitorId: string;
     for (const m of masks) {
       mask = mask | _maskToValue(m)!;
     }
     let prevEvent: NSEvent = null;
     window.getCurrent().listen("nsevent_on_event", ({ payload }) => {
+      if ((payload as any).monitor_id !== monitorId) {
+        return;
+      }
       let event: NSEvent = {
         type: _valueToMask((payload as any).event_type),
         position: (payload as any).point,
@@ -130,10 +134,14 @@ export class NSEvent {
       }
       prevEvent = event;
     });
-    await invoke("nsevent_add_global_monitor_for_events", { mask: mask });
+    monitorId = await invoke("nsevent_add_global_monitor_for_events", {
+      mask: mask,
+    });
+
+    return String(monitorId);
   }
 
-  static async removeMonitor() {
-    await invoke("nsevent_remove_monitor");
+  static async removeMonitor(id: string) {
+    await invoke("nsevent_remove_monitor", { id });
   }
 }
