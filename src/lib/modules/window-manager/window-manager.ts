@@ -13,12 +13,14 @@ import {
 } from "effector";
 import { NSEvent, NSEventType } from "../cocoa/models/nsevent";
 import { AccessibilityElement } from "../cocoa/models/accessibility-element";
-import { debounce, throttle } from "../shared/helpers";
+import { throttle } from "../shared/helpers";
 
 type MouseEvent<T extends "down" | "up" | "dragged"> = {
   type: T;
   position: Position;
 };
+
+let MONITOR_ID: string | null = null;
 
 export const onMouseDown = createEvent<MouseEvent<"down">>();
 export const onMouseDragged = createEvent<MouseEvent<"dragged">>();
@@ -42,22 +44,22 @@ const startWindowManagerListenFx = createEffect(async () => {
   });
 
   await AccessibilityElement.checkPermission();
-  NSEvent.addGlobalMonitor(
+  MONITOR_ID = await NSEvent.addGlobalMonitor(
     [
       NSEventType.leftMouseDownMask,
       NSEventType.leftMouseDraggedMask,
       NSEventType.leftMouseUpMask,
     ],
-    onGlobalEvent
+    onGlobalEvent,
   );
 });
 
 const stopWindowManagerListenFx = createEffect(async () => {
-  await NSEvent.removeMonitor();
+  await NSEvent.removeMonitor(MONITOR_ID);
 });
 
 const getCurrentAccessibilityElementFx = createEffect(() =>
-  AccessibilityElement.getUnderMouse()
+  AccessibilityElement.getUnderMouse(),
 );
 
 const setAccessibilityElementFrameFx = createEffect(
@@ -69,7 +71,7 @@ const setAccessibilityElementFrameFx = createEffect(
     frame: Frame;
   }) => {
     element.setFrame(frame);
-  }
+  },
 );
 
 const $mousePosition = createStore<Position | null>(null)
@@ -90,13 +92,13 @@ const $currentScreen = createStore<NSScreen>(null, {
       return prevScreen;
     }
     const findedScreen = screens.find((screen) =>
-      ScreensStore.screenToCgScreen(screen).frame.includesPoint(position)
+      ScreensStore.screenToCgScreen(screen).frame.includesPoint(position),
     );
     return findedScreen ?? prevScreen ?? mainScreen;
   });
 
 const $currentCGScreen = $currentScreen.map(
-  (state) => state && ScreensStore.screenToCgScreen(state)
+  (state) => state && ScreensStore.screenToCgScreen(state),
 );
 
 const $onMouseDownWindow = createStore<AccessibilityElement | null>(null);
@@ -115,7 +117,7 @@ const $draggingPositionFromScreen = combine([
 
     return new Position(
       offset.x - offsetPosition.x,
-      offset.y - offsetPosition.y
+      offset.y - offsetPosition.y,
     );
   }
   return null;
@@ -185,7 +187,7 @@ sample({
   target: $draggingPosition,
 });
 
-$currentScreen.watch((screen) => {
+$currentScreen.subscribe((screen) => {
   if (screen) {
     NSWindow.setFrame(screen.frame);
   }
@@ -200,8 +202,8 @@ const placeholderToScreen =
       new Size(placeholder.size.width, placeholder.size.height),
       new Position(
         placeholder.position.x + screenFrame.position.x,
-        placeholder.position.y + screenFrame.position.y
-      )
+        placeholder.position.y + screenFrame.position.y,
+      ),
     );
   };
 
@@ -225,14 +227,17 @@ const frameToPlaceholder =
       const pseudoScreenFrame = new Frame(
         new Size(
           screenFrame.size.width - gap * 2,
-          screenFrame.size.height - gap * 2
+          screenFrame.size.height - gap * 2,
         ),
-        new Position(screenFrame.position.x - gap, screenFrame.position.y - gap)
+        new Position(
+          screenFrame.position.x - gap,
+          screenFrame.position.y - gap,
+        ),
       );
       const frameFromScreen = new Frame(
         new Size(
           pseudoScreenFrame.size.width * frame.size.width - gap * 2,
-          pseudoScreenFrame.size.height * frame.size.height - gap * 2
+          pseudoScreenFrame.size.height * frame.size.height - gap * 2,
         ),
         new Position(
           relativeLeft +
@@ -240,8 +245,8 @@ const frameToPlaceholder =
             gap * 2,
           relativeTop +
             frame.position.y * pseudoScreenFrame.size.height +
-            gap * 2
-        )
+            gap * 2,
+        ),
       );
       return frameFromScreen || null;
     }
@@ -261,6 +266,7 @@ export const WindowManagerStore = {
   setWindowFrameFx,
   startWindowManagerListenFx,
   stopWindowManagerListenFx,
+  getCurrentAccessibilityElementFx,
   placeholderToScreen,
   frameToPlaceholder,
 };

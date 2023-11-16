@@ -1,22 +1,21 @@
-import { NSColor } from '@/modules/cocoa/models/nscolor';
-import { createEffect, createStore, sample } from 'effector';
-import { transparentize } from 'polished';
+import { NSColor } from "@/modules/cocoa/models/nscolor";
+import { createEffect, createStore, sample } from "effector";
+import { transparentize } from "polished";
 
-const style = document.createElement('style');
-style.id = '__theme-vars__';
-style.setAttribute('type', 'text/css');
+const style = document.createElement("style");
+style.id = "__theme-vars__";
+style.setAttribute("type", "text/css");
 document.head.appendChild(style);
 
 const initListenFx = createEffect(async () => {
-	const color = await NSColor.getAccentColor();
-	console.log(color);
-	return color.color;
+  const color = await NSColor.getAccentColor();
+  return color.color;
 });
 
-const $accent = createStore('#fcbfcb');
+const $accent = createStore("#fcbfcb");
 
 $accent.watch((color) => {
-	style.innerHTML = `
+  style.innerHTML = `
   :root {
     --color-accent: ${color};
     --color-accent50: ${transparentize(1 - 0.5)(color)};
@@ -26,10 +25,10 @@ $accent.watch((color) => {
 });
 
 sample({
-	clock: initListenFx.doneData,
-	target: $accent,
+  clock: initListenFx.doneData,
+  target: $accent,
 });
 
 export const ThemeStore = {
-	initListenFx,
+  initListenFx,
 };

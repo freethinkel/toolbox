@@ -1,19 +1,17 @@
 <script lang="ts">
-  import {getContext} from 'svelte';
-  import {CONTEXT_KEY, type SegmentedControlContext} from './context';
-  
+  import { getContext } from "svelte";
+  import { CONTEXT_KEY, type SegmentedControlContext } from "./context";
+
   export let value: string;
-  
+
   const context: SegmentedControlContext = getContext(CONTEXT_KEY);
   const onChange = context.onChange;
   const onControlTapDown = context.onControlTapDown;
   const onControlTapUp = context.onControlTapUp;
-  
+
   const wrapValue = (fn: (val: typeof value) => void) => () => fn(value);
-  
-  const handleClick = () => {
-    onChange(value);
-  };
+
+  const activeValue = context.value;
 </script>
 
 <button
@@ -22,8 +20,9 @@
   on:mousedown={wrapValue(onControlTapDown)}
   on:mouseup={wrapValue(onControlTapUp)}
   class="segmented_control__button"
+  class:active={$activeValue === value}
 >
-  <slot/>
+  <slot />
 </button>
 
 <style lang="postcss">
@@ -39,5 +38,8 @@
     background: none;
     font-size: inherit;
     color: inherit;
+  }
+  button.active {
+    color: var(--color-title);
   }
 </style>

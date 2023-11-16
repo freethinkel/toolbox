@@ -7,13 +7,11 @@ mod commands;
 mod data;
 mod extensions;
 mod patch_window;
-mod playground;
 
 use data::frame::Point;
 use patch_window::{overlay::patch_overlay_window, statusbar::patch_statusbar_window};
-#[cfg(debug_assertions)]
-use playground::playground;
 use tauri::{ActivationPolicy, Manager, SystemTray, SystemTrayEvent};
+use tauri_plugin_autostart::MacosLauncher;
 
 use crate::commands::{
     accessibility_element::{
@@ -30,8 +28,6 @@ use crate::commands::{
 
 fn main() {
     let tray = SystemTray::new();
-    #[cfg(debug_assertions)]
-    playground();
 
     tauri::Builder::default()
         .setup(|app| {
@@ -53,7 +49,7 @@ fn main() {
             nscolor_get_accent,
             accessibility_element_under_cursor,
             accessibility_element_set_frame,
-            accessibility_element_check_permission
+            accessibility_element_check_permission,
         ])
         .system_tray(tray)
         .on_system_tray_event(|app, event| match event {
@@ -70,6 +66,10 @@ fn main() {
             }
             _ => {}
         })
+        .plugin(tauri_plugin_autostart::init(
+            MacosLauncher::LaunchAgent,
+            Some(vec![]),
+        ))
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

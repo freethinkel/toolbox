@@ -1,6 +1,6 @@
 import { SettingsStore } from "@/modules/settings/store/settings.store";
 import { Frame, Position, Size } from "@/modules/shared/models/frame";
-import { ScreensStore, WindowManagerStore } from "@/modules/window-manager";
+import { WindowManagerStore } from "@/modules/window-manager";
 import { combine, createStore, sample } from "effector";
 import { WindowManagerStatusbarStore } from "./statusbar.store";
 

@@ -5,6 +5,7 @@ import SettingsView from './view/Settings.svelte';
 import { TBPlugin } from '../../models/plugin';
 
 class WindowManagerPlugin extends TBPlugin {
+	name = "Window manager"
 	override renderOverlay(): typeof SvelteComponent {
 		return OverlayView;
 	}
